@@ -33,7 +33,7 @@ public class CsvUtils {
         }
         builder.append(System.getProperty("line.separator"));
         for (int i = 0; i < lists.size(); i++) {
-            for (int j = 0; j < lists.get(0).length; j++) {
+            for (int j = 0; j < lists.get(i).length; j++) {
                 if (j == lists.get(0).length - 1) {
                     builder.append(lists.get(i)[j]);
                 } else {

@@ -190,7 +190,8 @@ public class Test {
     public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException {
         modelPCA = new ArrayList<>();
         ArrayList<String[]> listData = new ArrayList<>();
-        for (int i = 0; i < classGender.length; i++) {
+//        for (int i = 0; i < classGender.length; i++) {
+        for (int i = 0; i < 1; i++) {
 //            getTrainTestData(i);
             getTrainTestDataFromCSV(i);
 
@@ -211,7 +212,7 @@ public class Test {
                     listData.addAll(weights);
                 } else {
                     for (int k = 0; k < dataTrain.size(); k++) {
-                        String[] tmp1 = listData.get(i);
+                        String[] tmp1 = listData.get(k);
                         String[] result = new String[block * feat];
                         System.arraycopy(tmp1, 0, result, 0, tmp1.length);
                         System.arraycopy(weights.get(k), 0, result, j * feat, weights.get(k).length);
