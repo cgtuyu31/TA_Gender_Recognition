@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import org.opencv.core.Core;
+import ta_gender_recognition.GUI;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -46,7 +47,7 @@ public class PCA {
     static Matrix eigenVector; // M x M
     static Matrix eigenFace; // [nFeature x M] * [M x M] = nFeature x M
     static String gender;
-    static final String HEADER_PRINT = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training";
+    static final String HEADER_PRINT = GUI.PATH_HEADER_TRAINING;
 
     public PCA(int K, int nFeature) {
         this.K = K;
@@ -67,25 +68,25 @@ public class PCA {
         
         //AVERAGE
         calcAvg();
-        writeToCSV(avg, HEADER_PRINT + "\\avg_" + gender + ".csv");
+        writeToCSV(avg, HEADER_PRINT + "avg_" + gender + ".csv");
 
         //NORMALIZE
         normalize();
-        writeToCSV(listNorm, HEADER_PRINT + "\\listNorm_" + gender + ".csv");
+        writeToCSV(listNorm, HEADER_PRINT + "listNorm_" + gender + ".csv");
 
         //COVARIANCE MATRIX
         calcCovarianceMatrix();
-        writeToCSV(matrixB, HEADER_PRINT + "\\matrixB_" + gender + ".csv");
-        writeToCSV(matrixB.transpose(), HEADER_PRINT + "\\matrixBtranspose_" + gender + ".csv");
-        writeToCSV(matrixCovariance, HEADER_PRINT + "\\matrixCovariance_" + gender + ".csv");
+        writeToCSV(matrixB, HEADER_PRINT + "matrixB_" + gender + ".csv");
+        writeToCSV(matrixB.transpose(), HEADER_PRINT + "matrixBtranspose_" + gender + ".csv");
+        writeToCSV(matrixCovariance, HEADER_PRINT + "matrixCovariance_" + gender + ".csv");
 
         //EIGEN VALUE & EIGEN VECTOR
         calcEigenValueAndVector();
-        writeToCSV(eigenVector, HEADER_PRINT + "\\EigenVec_" + gender + ".csv");
+        writeToCSV(eigenVector, HEADER_PRINT + "EigenVec_" + gender + ".csv");
 
         //EIGEN FACE
         calcEigenface();
-        writeToCSV(eigenFace, HEADER_PRINT + "\\EigenFace_" + gender + ".csv");
+        writeToCSV(eigenFace, HEADER_PRINT + "EigenFace_" + gender + ".csv");
 
         //WEIGHT
         calcWeight();
@@ -218,7 +219,7 @@ public class PCA {
         
         BufferedWriter writer;
         try {
-            writer = new BufferedWriter(new FileWriter("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_" + gender + ".csv"));
+            writer = new BufferedWriter(new FileWriter(HEADER_PRINT+"pca_" + gender + ".csv"));
             writer.write(builder.toString());//save the string representation of the board
             writer.close();
         } catch (IOException ex) {

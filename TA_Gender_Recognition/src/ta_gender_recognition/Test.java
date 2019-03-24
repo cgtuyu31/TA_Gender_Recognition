@@ -49,20 +49,20 @@ public class Test {
 
     private static String[] classGender = {"male", "female",};
     private static String[] pathGenderTrain = {
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\lfw_male",
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\lfw_female"};
+        GUI.PATH_HEADER_DATASET + "lfw_male",
+        GUI.PATH_HEADER_DATASET + "lfw_female"};
     private static String[] pathCropGenderTrain = {
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_male",
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_female"};
+        GUI.PATH_HEADER_DATASET + "crop_lfw_male",
+        GUI.PATH_HEADER_DATASET + "crop_lfw_female"};
     private static String[] pathDataCENTRIST = {
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_male.csv",
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_female.csv"};
+        GUI.PATH_HEADER_TRAINING + "train_male.csv",
+        GUI.PATH_HEADER_TRAINING + "train_female.csv"};
     private static String[] pathDataCENTRIST2 = {
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_male.csv",
-        "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_female.csv"};
-    private static String HEADER_PATH_DATA = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
-    private static String pathDataTrain = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_train.csv";
-    private static String pathDataTest = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_test.csv";
+        GUI.PATH_HEADER_TRAINING + "test_male.csv",
+        GUI.PATH_HEADER_TRAINING + "test_female.csv"};
+    private static String HEADER_PATH_DATA = GUI.PATH_HEADER_TRAINING;
+    private static String pathDataTrain = GUI.PATH_HEADER_TRAINING + "pca_train.csv";
+    private static String pathDataTest = GUI.PATH_HEADER_TRAINING + "pca_test.csv";
     private static ArrayList<String[]> modelPCA;
     private static int nData = 1500;
     private static int nTrain = 1300;
@@ -189,11 +189,14 @@ public class Test {
 
     public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException {
         modelPCA = new ArrayList<>();
+        ArrayList<String[]> listData = new ArrayList<>();
         for (int i = 0; i < classGender.length; i++) {
 //            getTrainTestData(i);
             getTrainTestDataFromCSV(i);
 
             for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Block : "+(j+1));
                 ArrayList<double[]> tmp = new ArrayList<>();
                 for (double[] tes : dataTrain) {
                     tmp.add(Normalization.getChunkArray(tes, feat, j));
@@ -203,13 +206,20 @@ public class Test {
                 pca.train(tmp, classGender[i]);
 
                 ArrayList<String[]> weights = pca.getListWeight();
-                
-                for (int k = 0; k < dataTrain.size(); k++) {
-                    String result[] = new String[block * feat];
-                    System.arraycopy(weights.get(k), 0, modelPCA.get(k), j*feat, weights.get(k).length);
+
+                if (j == 0) {
+                    listData.addAll(weights);
+                } else {
+                    for (int k = 0; k < dataTrain.size(); k++) {
+                        String[] tmp1 = listData.get(i);
+                        String[] result = new String[block * feat];
+                        System.arraycopy(tmp1, 0, result, 0, tmp1.length);
+                        System.arraycopy(weights.get(k), 0, result, j * feat, weights.get(k).length);
+                        listData.set(k, result);
+                    }
                 }
             }
-
+            modelPCA.addAll(listData);
         }
         CsvUtils.writeToCSVwithLabel(modelPCA, pathDataTrain);
     }
