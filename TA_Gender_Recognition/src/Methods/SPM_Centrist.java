@@ -99,7 +99,7 @@ public class SPM_Centrist {
         return img_ori;
     }
 
-    static void extract(String imagePath) {
+    public static void extract(String imagePath) {
         Mat img = preprocessing(imagePath);
         Mat cropImg;
         Mat resizedImg = new Mat();
@@ -194,7 +194,7 @@ public class SPM_Centrist {
         System.out.println("Extract CENTRIST "+imagePath+" DONE!!");
     }
 
-    static double[] getHistogram() {
+    public static double[] getHistogram() {
         return histogram;
     }
 
