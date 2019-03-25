@@ -283,7 +283,8 @@ public class PCA {
 
         //[K x nFeature] * [nFeature x 1] = [K x 1]
         weightTest = new double[K];
-        weight = new String[K+1];
+//        weight = new String[K+1];
+        weight = new String[K];
         for (int j = 0; j < weightTest.length; j++) {
             for (int k = 0; k < eigenfaceTransTest[0].length; k++) {
                 weightTest[j] += eigenfaceTransTest[j][k] * normalizeImg[k];
@@ -291,7 +292,7 @@ public class PCA {
             builder.append(Math.abs(weightTest[j]) + ",");
             weight[j] = Math.abs(weightTest[j])+"";
         }
-        weight[weight.length-1] = gender;
+//        weight[weight.length-1] = gender;
 
         BufferedWriter writer;
         try {

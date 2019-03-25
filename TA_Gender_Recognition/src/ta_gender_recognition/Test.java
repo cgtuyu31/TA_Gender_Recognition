@@ -47,7 +47,8 @@ import weka.core.converters.ConverterUtils;
  */
 public class Test {
 
-    private static String[] classGender = {"male", "female",};
+//    private static String[] classGender = {"male", "female"};
+    private static String[] classGender = {"male"};
     private static String[] pathGenderTrain = {
         GUI.PATH_HEADER_DATASET + "lfw_male",
         GUI.PATH_HEADER_DATASET + "lfw_female"};
@@ -72,7 +73,7 @@ public class Test {
     private static int nTotal = 0;
     private static final int features = 1240;
     private static final int block = 31;
-    private static final int feat = 256;
+    private static final int feat = 40;
     private static ArrayList<double[]> dataTrain;
     private static ArrayList<double[]> dataTestMale;
     private static ArrayList<double[]> dataTestFemale;
@@ -190,14 +191,14 @@ public class Test {
     public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException {
         modelPCA = new ArrayList<>();
         ArrayList<String[]> listData = new ArrayList<>();
-//        for (int i = 0; i < classGender.length; i++) {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < classGender.length; i++) {
+//        for (int i = 0; i < 1; i++) {
 //            getTrainTestData(i);
             getTrainTestDataFromCSV(i);
 
             for (int j = 0; j < block; j++) {
                 System.out.println("======================================================");
-                System.out.println("Block : "+(j+1));
+                System.out.println("Block : " + (j + 1));
                 ArrayList<double[]> tmp = new ArrayList<>();
                 for (double[] tes : dataTrain) {
                     tmp.add(Normalization.getChunkArray(tes, feat, j));
@@ -207,18 +208,24 @@ public class Test {
                 pca.train(tmp, classGender[i]);
 
                 ArrayList<String[]> weights = pca.getListWeight();
-
+                System.out.println("weight.size : " + weights.size());
+                System.out.println("weight[0].length : " + weights.get(0).length);
                 if (j == 0) {
                     listData.addAll(weights);
+                    System.out.println("listData.size : " + listData.size());
+                    System.out.println("listData[0].length : " + listData.get(0).length);
                 } else {
-                    for (int k = 0; k < dataTrain.size(); k++) {
+                    for (int k = 0; k < weights.size(); k++) {
                         String[] tmp1 = listData.get(k);
-                        String[] result = new String[block * feat];
+                        String[] result = new String[(block * feat) + 1];
                         System.arraycopy(tmp1, 0, result, 0, tmp1.length);
                         System.arraycopy(weights.get(k), 0, result, j * feat, weights.get(k).length);
                         listData.set(k, result);
                     }
                 }
+            }
+            for (int k = 0; k < listData.size(); k++) {
+                listData.get(k)[k] = classGender[i];
             }
             modelPCA.addAll(listData);
         }
