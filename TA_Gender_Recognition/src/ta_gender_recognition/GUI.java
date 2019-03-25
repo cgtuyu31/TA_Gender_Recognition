@@ -10,10 +10,10 @@ package ta_gender_recognition;
  * @author Tuyu
  */
 public class GUI extends javax.swing.JFrame {
-//    final static String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
-//    final static String PATH_HEADER_DATASET = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\";
-    public final static String PATH_HEADER_TRAINING = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Hasil_Training\\";
-    public final static String PATH_HEADER_DATASET = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Dataset\\";
+    public final static String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+    public final static String PATH_HEADER_DATASET = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\";
+//    public final static String PATH_HEADER_TRAINING = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Hasil_Training\\";
+//    public final static String PATH_HEADER_DATASET = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Dataset\\";
     public final static String[] classGender = {"male", "female",};
     
     /**

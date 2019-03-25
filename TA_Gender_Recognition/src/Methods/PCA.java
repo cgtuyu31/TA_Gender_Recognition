@@ -204,7 +204,8 @@ public class PCA {
         System.out.println("eigenfaceTrans[0].length : " + eigenfaceTrans[0].length);
         for (int i = 0; i < listNorm.size(); i++) {
             weight = new double[K];
-            tmp = new String[K+1];
+//            tmp = new String[K+1];
+            tmp = new String[K];
             for (int j = 0; j < weight.length; j++) {
                 for (int k = 0; k < eigenfaceTrans[0].length; k++) {
                     weight[j] += eigenfaceTrans[j][k] * listNorm.get(i)[k];
@@ -212,7 +213,7 @@ public class PCA {
                 builder.append(Math.abs(weight[j]) + ",");
                 tmp[j] = Math.abs(weight[j])+"";
             }
-            tmp[weight.length] = gender+"";
+//            tmp[weight.length] = gender+"";
             listWeight.add(tmp);
             builder.append(System.getProperty("line.separator"));
         }
