@@ -53,7 +53,27 @@ public class CsvUtils {
 //            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void writeStringToCSV(ArrayList<String[]> lists, String path) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < lists.size(); i++) {
+            for (int j = 0; j < lists.get(0).length; j++) {
+                builder.append(lists.get(i)[j] + ",");
+            }
+            builder.append(System.getProperty("line.separator"));
+        }
 
+        BufferedWriter writer;
+        try {
+            writer = new BufferedWriter(new FileWriter(path));
+            writer.write(builder.toString());//save the string representation of the board
+            writer.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+//            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public static void writeToCSV(ArrayList<double[]> lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.size(); i++) {

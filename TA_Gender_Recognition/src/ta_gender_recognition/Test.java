@@ -26,16 +26,13 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import static Methods.CsvUtils.getArrayListDataFromText2D;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText2D;
-import static Methods.CsvUtils.getDataStringFromText2D;
-import static Methods.CsvUtils.writeToCSV;
+import Methods.CsvUtils;
 import Methods.FaceDetector;
 import Methods.Normalization;
 import Methods.PCA;
 import Methods.SPM_Centrist;
 import Methods.SupportVectorMachine;
+import static ta_gender_recognition.GUI.PATH_HEADER_TRAINING;
 import weka.attributeSelection.PrincipalComponents;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -47,8 +44,8 @@ import weka.core.converters.ConverterUtils;
  */
 public class Test {
 
-//    private static String[] classGender = {"male", "female"};
-    private static String[] classGender = {"male"};
+    private static String[] classGender = {"male", "female"};
+//    private static String[] classGender = {"male"};
     private static String[] pathGenderTrain = {
         GUI.PATH_HEADER_DATASET + "lfw_male",
         GUI.PATH_HEADER_DATASET + "lfw_female"};
@@ -78,7 +75,7 @@ public class Test {
     private static ArrayList<double[]> dataTestMale;
     private static ArrayList<double[]> dataTestFemale;
     private static ArrayList<String[]> dataTest;
-    private static double sigma = 100000;
+    private static double sigma = 10;
 
     public static void cropFace() {
         for (int i = 0; i < classGender.length; i++) {
@@ -123,12 +120,12 @@ public class Test {
 
         if (gen == 0) {
             nMale = n;
-            writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_male.csv");
-            writeToCSV(dataTestMale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_male.csv");
+            CsvUtils.writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_male.csv");
+            CsvUtils.writeToCSV(dataTestMale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_male.csv");
         } else {
             nFemale = n;
-            writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_female.csv");
-            writeToCSV(dataTestFemale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_female.csv");
+            CsvUtils.writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_female.csv");
+            CsvUtils.writeToCSV(dataTestFemale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_female.csv");
         }
 
         nTotal = nMale + nFemale;
@@ -142,7 +139,7 @@ public class Test {
     }
 
     public static void getTrainTestDataFromCSV(int gen) throws FileNotFoundException {
-        dataTrain = getArrayListDataFromText2D(pathDataCENTRIST[gen], nTrain, features);
+        dataTrain = CsvUtils.getArrayListDataFromText2D(pathDataCENTRIST[gen], nTrain, features);
 //        dataTrain.addAll(getArrayListDataFromText2D(pathDataCENTRIST2[gen], nTest, features));
     }
 
@@ -190,12 +187,12 @@ public class Test {
 
     public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException {
         modelPCA = new ArrayList<>();
-        ArrayList<String[]> listData = new ArrayList<>();
+        ArrayList<String[]> listData;
         for (int i = 0; i < classGender.length; i++) {
 //        for (int i = 0; i < 1; i++) {
 //            getTrainTestData(i);
             getTrainTestDataFromCSV(i);
-
+            listData = new ArrayList<>();
             for (int j = 0; j < block; j++) {
                 System.out.println("======================================================");
                 System.out.println("Block : " + (j + 1));
@@ -208,12 +205,11 @@ public class Test {
                 pca.train(tmp, classGender[i]);
 
                 ArrayList<String[]> weights = pca.getListWeight();
+                CsvUtils.writeStringToCSV(weights, PATH_HEADER_TRAINING + "blocks\\block_" + j + "_" + classGender[i]+".csv");
                 System.out.println("weight.size : " + weights.size());
                 System.out.println("weight[0].length : " + weights.get(0).length);
                 if (j == 0) {
                     listData.addAll(weights);
-                    System.out.println("listData.size : " + listData.size());
-                    System.out.println("listData[0].length : " + listData.get(0).length);
                 } else {
                     for (int k = 0; k < weights.size(); k++) {
                         String[] tmp1 = listData.get(k);
@@ -223,11 +219,16 @@ public class Test {
                         listData.set(k, result);
                     }
                 }
+                System.out.println("listData.size : " + listData.size());
+                System.out.println("listData[0].length : " + listData.get(0).length);
+                System.out.println("listData[length-1] : " + listData.get(0)[listData.get(0).length - 1]);
             }
             for (int k = 0; k < listData.size(); k++) {
-                listData.get(k)[k] = classGender[i];
+                listData.get(k)[listData.get(k).length - 1] = classGender[i];
             }
             modelPCA.addAll(listData);
+            System.out.println("modelPCA size : " + modelPCA.size());
+            System.out.println("modelPCA[].length : " + modelPCA.get(0).length);
         }
         CsvUtils.writeToCSVwithLabel(modelPCA, pathDataTrain);
     }
@@ -267,18 +268,17 @@ public class Test {
     }
 
     public static void trainSVM() {
-        //class -> 1 = male, 0 = female
-        String[] gender = {"male", "female"};
 //        String[] gender = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"};
 //        String[] gender = {"setosa", "versicolor", "virginica"};
-        nTotal = nTrain * 2;
+//        nTotal = nTrain * 2;
 //        nTotal = 2643;
 //        nTotal = 2700;
+        nTotal = 1300;
 
         SupportVectorMachine svm = new SupportVectorMachine();
         svm.setSigma(sigma);
         try {
-            String[][] datatrain = getDataStringFromText2D(pathDataTrain, (nTotal + 1), (features + 1));
+            String[][] datatrain = CsvUtils.getDataStringFromText2D(pathDataTrain, (nTotal + 1), (features + 1));
             double[][] data = new double[nTotal][features];
             for (int i = 1; i < datatrain.length; i++) {
                 for (int j = 0; j < datatrain[0].length - 1; j++) {
@@ -288,10 +288,10 @@ public class Test {
 //                System.out.println("");
             }
 
-            for (int index = 0; index < gender.length; index++) {
+            for (int index = 0; index < classGender.length; index++) {
                 double[] classList = new double[nTotal + 1];
                 for (int i = 0; i < classList.length - 1; i++) {
-                    if (datatrain[i + 1][features].equals(gender[index])) {
+                    if (datatrain[i + 1][features].equals(classGender[index])) {
                         classList[i] = 1;
                     } else {
                         classList[i] = -1;
@@ -309,7 +309,7 @@ public class Test {
                     System.out.println("X - " + (i + 1) + " : " + solutions.get(i, 0));
                 }
 
-                System.out.println("Model for " + gender[index] + " with " + features + " feature is saved!");
+                System.out.println("Model for " + classGender[index] + " with " + features + " feature is saved!");
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < linearEquation.length; i++) {
                     builder.append(solutions.get(i, 0));
@@ -318,7 +318,7 @@ public class Test {
 
                 BufferedWriter writer;
                 try {
-                    writer = new BufferedWriter(new FileWriter("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_" + features + "_sigma-" + svm.getSigma() + "_model-" + gender[index] + ".txt"));
+                    writer = new BufferedWriter(new FileWriter("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_" + features + "_sigma-" + svm.getSigma() + "_model-" + classGender[index] + ".txt"));
                     writer.write(builder.toString());//save the string representation of the board
                     writer.close();
                 } catch (IOException e) {
@@ -354,8 +354,8 @@ public class Test {
     public static void testPCA() throws UnsupportedEncodingException, IOException {
 //        getTestData(0);
 //        getTestData(1);
-        dataTestMale = getArrayListDataFromText2D(HEADER_PATH_DATA + "test_male.csv", nTest, 7936);
-        dataTestFemale = getArrayListDataFromText2D(HEADER_PATH_DATA + "test_female.csv", nTest, 7936);
+        dataTestMale = CsvUtils.getArrayListDataFromText2D(HEADER_PATH_DATA + "test_male.csv", nTest, 7936);
+        dataTestFemale = CsvUtils.getArrayListDataFromText2D(HEADER_PATH_DATA + "test_female.csv", nTest, 7936);
         dataTest = new ArrayList<>();
         PCA pca = new PCA(40, 256);
 
@@ -373,7 +373,7 @@ public class Test {
         String[] gender = {"male", "female"};
         SupportVectorMachine svm = new SupportVectorMachine();
         try {
-            String[][] dataset = getDataStringFromText2D(pathDataTrain, (nTotal + 1), (features + 1));
+            String[][] dataset = CsvUtils.getDataStringFromText2D(pathDataTrain, (nTotal + 1), (features + 1));
             double[][] data = new double[nTotal][features];
 
             for (int i = 1; i < dataset.length; i++) {
@@ -399,10 +399,10 @@ public class Test {
                 //get model (alpha and bias)
                 String modelPath = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_" + features + "_sigma-" + sigma + "_model-" + gender[index] + ".txt";
 
-                double[] solutions = getDataFromText(modelPath, (nTotal + 1));
+                double[] solutions = CsvUtils.getDataFromText(modelPath, (nTotal + 1));
 
                 //get testing data, create RBF matrix test
-                String[][] datasetTest = getDataStringFromText2D(pathDataTest, (nTest * 2 + 1), (features + 1));
+                String[][] datasetTest = CsvUtils.getDataStringFromText2D(pathDataTest, (nTest * 2 + 1), (features + 1));
                 double[][] dataTest = new double[nTest * 2][features];
 
                 for (int i = 1; i < datasetTest.length; i++) {
@@ -612,7 +612,7 @@ public class Test {
     public static void cobaReadCsv() throws FileNotFoundException {
         String path = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_read.csv";
 //        path = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\avg_male.csv";
-        double[][] data = getDataFromText2D(path, 7, 4);
+        double[][] data = CsvUtils.getDataFromText2D(path, 7, 4);
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
                 System.out.print(data[i][j] + " ");
