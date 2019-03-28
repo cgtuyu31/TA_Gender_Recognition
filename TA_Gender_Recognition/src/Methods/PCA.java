@@ -53,22 +53,22 @@ public class PCA {
         this.K = K;
         this.nFeature = nFeature;
     }
-    
+
     ///test
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         cobaTest();
     }
 
-    public static void train(ArrayList<double[]> listHist, String gen) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void train(ArrayList<double[]> listHist, String gen, int block) throws FileNotFoundException, UnsupportedEncodingException {
         nFeature = listHist.get(0).length;
         listData = listHist;
         avg = new double[nFeature];
         gender = gen;
-        
+
         //AVERAGE
         calcAvg();
-        writeToCSV(avg, HEADER_PRINT + "avg_" + gender + ".csv");
+        writeToCSV(avg, HEADER_PRINT + "avg\\avg_" + block + "_" + gender + ".csv");
 
         //NORMALIZE
         normalize();
@@ -86,7 +86,7 @@ public class PCA {
 
         //EIGEN FACE
         calcEigenface();
-        writeToCSV(eigenFace, HEADER_PRINT + "EigenFace_" + gender + ".csv");
+        writeToCSV(eigenFace, HEADER_PRINT + "eigenface\\EigenFace_" + block + "_" + gender + ".csv");
 
         //WEIGHT
         calcWeight();
@@ -94,8 +94,8 @@ public class PCA {
     }
 
     public static void calcAvg() throws FileNotFoundException, UnsupportedEncodingException {
-        System.out.println("nFeature = "+nFeature);
-        System.out.println("listData.size() = "+listData.size());
+        System.out.println("nFeature = " + nFeature);
+        System.out.println("listData.size() = " + listData.size());
         for (int i = 0; i < nFeature; i++) {
             for (int j = 0; j < listData.size(); j++) {
                 avg[i] += listData.get(j)[i];
@@ -211,16 +211,16 @@ public class PCA {
                     weight[j] += eigenfaceTrans[j][k] * listNorm.get(i)[k];
                 }
                 builder.append(Math.abs(weight[j]) + ",");
-                tmp[j] = Math.abs(weight[j])+"";
+                tmp[j] = Math.abs(weight[j]) + "";
             }
 //            tmp[weight.length] = gender+"";
             listWeight.add(tmp);
             builder.append(System.getProperty("line.separator"));
         }
-        
+
         BufferedWriter writer;
         try {
-            writer = new BufferedWriter(new FileWriter(HEADER_PRINT+"pca_" + gender + ".csv"));
+            writer = new BufferedWriter(new FileWriter(HEADER_PRINT + "pca_" + gender + ".csv"));
             writer.write(builder.toString());//save the string representation of the board
             writer.close();
         } catch (IOException ex) {
@@ -230,7 +230,7 @@ public class PCA {
 //        writer.close();
     }
 
-    public static String[] testing(double[] histImg, String gender) throws FileNotFoundException, UnsupportedEncodingException, IOException {
+    public static String[] testing(double[] histImg, String gender, int block) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         nFeature = histImg.length;
         StringBuilder builder = new StringBuilder();
         String path = "";
@@ -241,7 +241,7 @@ public class PCA {
 //            histImg[j] = histImg[j] / 255;
 //        }
 //=========NORMALISASI==================
-        path = HEADER_PRINT + "\\avg_" + gender + ".csv";
+        path = HEADER_PRINT + "avg\\avg_" + block + "_" + gender + ".csv";
         double[] avgTest = null;
         avgTest = getDataFromCSV(path, histImg.length);
 //        BufferedReader in = new BufferedReader(new FileReader("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\avg_" + gender + ".txt"));
@@ -260,7 +260,7 @@ public class PCA {
         }
 
 //========KALI EIGENFACE TIAP GENDER================
-        path = HEADER_PRINT + "\\eigenface_" + gender + ".csv";
+        path = HEADER_PRINT + "eigenface\\EigenFace_" + block + "_" + gender + ".csv";
         Scanner sc = new Scanner(new BufferedReader(new FileReader(path)));
         double[][] eigenface = new double[nFeature][sc.nextLine().trim().split(",").length]; // nFeature x M
         eigenface = getDataFromText2D(path, eigenface.length, eigenface[0].length);
@@ -291,7 +291,7 @@ public class PCA {
                 weightTest[j] += eigenfaceTransTest[j][k] * normalizeImg[k];
             }
             builder.append(Math.abs(weightTest[j]) + ",");
-            weight[j] = Math.abs(weightTest[j])+"";
+            weight[j] = Math.abs(weightTest[j]) + "";
         }
 //        weight[weight.length-1] = gender;
 
@@ -304,7 +304,7 @@ public class PCA {
             System.out.println(ex);
 //            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 //        System.out.println("TESTING DONE!");
         return weight;
     }
@@ -326,7 +326,7 @@ public class PCA {
     public void setK(int K) {
         this.K = K;
     }
-    
+
     public ArrayList<String[]> getListWeight() {
         return listWeight;
     }
@@ -392,8 +392,8 @@ public class PCA {
 
         SPM_Centrist c = new SPM_Centrist(2);
         c.extract(path);
-        System.out.println(c.getHistogram().length) ;
-        testing(c.getHistogram(), gender);
+        System.out.println(c.getHistogram().length);
+//        testing(c.getHistogram(), gender);
     }
 
     public static void cobaTrain() throws FileNotFoundException, UnsupportedEncodingException {

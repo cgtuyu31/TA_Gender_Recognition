@@ -31,6 +31,7 @@ import Methods.FaceDetector;
 import Methods.Normalization;
 import Methods.PCA;
 import Methods.SPM_Centrist;
+import Methods.SVMweka;
 import Methods.SupportVectorMachine;
 import static ta_gender_recognition.GUI.PATH_HEADER_TRAINING;
 import weka.attributeSelection.PrincipalComponents;
@@ -70,12 +71,13 @@ public class Test {
     private static int nTotal = 0;
     private static final int features = 1240;
     private static final int block = 31;
-    private static final int feat = 40;
+    private static final int pcaK = 40;
+    private static final int pcaFeatures = 256;
     private static ArrayList<double[]> dataTrain;
     private static ArrayList<double[]> dataTestMale;
     private static ArrayList<double[]> dataTestFemale;
     private static ArrayList<String[]> dataTest;
-    private static double sigma = 10;
+    private static double sigma = 0.01;
 
     public static void cropFace() {
         for (int i = 0; i < classGender.length; i++) {
@@ -198,14 +200,14 @@ public class Test {
                 System.out.println("Block : " + (j + 1));
                 ArrayList<double[]> tmp = new ArrayList<>();
                 for (double[] tes : dataTrain) {
-                    tmp.add(Normalization.getChunkArray(tes, feat, j));
+                    tmp.add(Normalization.getChunkArray(tes, pcaFeatures, j));
                 }
 
-                PCA pca = new PCA(40, feat);
-                pca.train(tmp, classGender[i]);
+                PCA pca = new PCA(pcaK, pcaFeatures);
+                pca.train(tmp, classGender[i], j);
 
                 ArrayList<String[]> weights = pca.getListWeight();
-                CsvUtils.writeStringToCSV(weights, PATH_HEADER_TRAINING + "blocks\\block_" + j + "_" + classGender[i]+".csv");
+                CsvUtils.writeStringToCSV(weights, PATH_HEADER_TRAINING + "blocks\\block_" + j + "_" + classGender[i] + ".csv");
                 System.out.println("weight.size : " + weights.size());
                 System.out.println("weight[0].length : " + weights.get(0).length);
                 if (j == 0) {
@@ -213,9 +215,9 @@ public class Test {
                 } else {
                     for (int k = 0; k < weights.size(); k++) {
                         String[] tmp1 = listData.get(k);
-                        String[] result = new String[(block * feat) + 1];
+                        String[] result = new String[(block * pcaK) + 1];
                         System.arraycopy(tmp1, 0, result, 0, tmp1.length);
-                        System.arraycopy(weights.get(k), 0, result, j * feat, weights.get(k).length);
+                        System.arraycopy(weights.get(k), 0, result, j * pcaK, weights.get(k).length);
                         listData.set(k, result);
                     }
                 }
@@ -270,10 +272,10 @@ public class Test {
     public static void trainSVM() {
 //        String[] gender = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"};
 //        String[] gender = {"setosa", "versicolor", "virginica"};
-//        nTotal = nTrain * 2;
+        nTotal = nTrain * 2;
 //        nTotal = 2643;
 //        nTotal = 2700;
-        nTotal = 1300;
+//        nTotal = 1300;
 
         SupportVectorMachine svm = new SupportVectorMachine();
         svm.setSigma(sigma);
@@ -337,14 +339,14 @@ public class Test {
     }
 
     public static void trainSVMsmo() throws Exception {
-//        SVMweka svm = new SVMweka();
-//
-//        svm.loadCSV(pathDataTrain);
-//        svm.buildModel("weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K \"weka.classifiers.functions.supportVector.RBFKernel -C 250007 -G 0.01\" -calibrator \"weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4\"");
-//        svm.saveModelToFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
-//        svm.loadModelFromFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
-//        Instances ins = svm.getInstances();
-//        int n = 1;
+        SVMweka svm = new SVMweka();
+
+        svm.loadCSV(pathDataTrain);
+        svm.buildModel("weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K \'weka.classifiers.functions.supportVector.RBFKernel -C 250007 -G 5.0\' -calibrator \'weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4\'");
+        svm.saveModelToFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
+        svm.loadModelFromFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
+        Instances ins = svm.getInstances();
+        int n = 1;
 //        for (Instance in : ins) {
 //            System.out.println("Predict Value Data - " + n + " : " + svm.classifyInstance(in));
 //            n++;
@@ -357,13 +359,35 @@ public class Test {
         dataTestMale = CsvUtils.getArrayListDataFromText2D(HEADER_PATH_DATA + "test_male.csv", nTest, 7936);
         dataTestFemale = CsvUtils.getArrayListDataFromText2D(HEADER_PATH_DATA + "test_female.csv", nTest, 7936);
         dataTest = new ArrayList<>();
-        PCA pca = new PCA(40, 256);
+        PCA pca;
+        String[] weightTest;
+        for (int i = 0; i < dataTestMale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestMale.get(i), classGender[0]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestMale.get(i), pcaFeatures, j);
 
-        for (int j = 0; j < dataTestMale.size(); j++) {
-            dataTest.add(pca.testing(dataTestMale.get(j), classGender[0]));
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.testing(tmp, classGender[0], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[0];
+            }
+            dataTest.add(weightTest);
         }
-        for (int j = 0; j < dataTestFemale.size(); j++) {
-            dataTest.add(pca.testing(dataTestFemale.get(j), classGender[1]));
+        for (int i = 0; i < dataTestFemale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestFemale.get(j), classGender[1]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestFemale.get(i), pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.testing(tmp, classGender[1], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[1];
+            }
+            dataTest.add(weightTest);
         }
 
         CsvUtils.writeToCSVwithLabel(dataTest, pathDataTest);
@@ -553,10 +577,10 @@ public class Test {
     public static void main(String arg[]) throws FileNotFoundException, UnsupportedEncodingException, IOException, Exception {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 //        cropFace();
-        trainPCA();
-//        trainSVM();
+//        trainPCA();
+        trainSVMweka();
 //        testPCA();
-//        testSVM();
+        testSVM();
 
 //        ConverterUtils.DataSource source = new ConverterUtils.DataSource(pathDataTrain);
 //        Instances data_train = source.getDataSet();
