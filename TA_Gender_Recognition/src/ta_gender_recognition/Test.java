@@ -33,8 +33,14 @@ import Methods.PCA;
 import Methods.SPM_Centrist;
 import Methods.SVMweka;
 import Methods.SupportVectorMachine;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import net.semanticmetadata.lire.imageanalysis.features.global.centrist.SpatialPyramidCentrist;
 import static ta_gender_recognition.GUI.PATH_HEADER_TRAINING;
 import weka.attributeSelection.PrincipalComponents;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
@@ -61,7 +67,7 @@ public class Test {
         GUI.PATH_HEADER_TRAINING + "test_female.csv"};
     private static String HEADER_PATH_DATA = GUI.PATH_HEADER_TRAINING;
     private static String pathDataTrain = GUI.PATH_HEADER_TRAINING + "pca_train.csv";
-    private static String pathDataTest = GUI.PATH_HEADER_TRAINING + "pca_test.csv";
+    private static String pathDataTest = GUI.PATH_HEADER_TRAINING + "pca_test_lib.arff";
     private static ArrayList<String[]> modelPCA;
     private static int nData = 1500;
     private static int nTrain = 1300;
@@ -91,6 +97,55 @@ public class Test {
             }
         }
         System.out.println("Detecting Face Done!!");
+    }
+
+    public static void getCentristLibData(int gen) throws IOException {
+        int n = 0;
+        SpatialPyramidCentrist c;
+
+        dataTrain = new ArrayList<>();
+        dataTestMale = new ArrayList<>();
+        dataTestFemale = new ArrayList<>();
+
+        File folderGenderTraining = new File(pathCropGenderTrain[gen]);
+        System.out.println("classGender = " + classGender[gen]);
+        nTest = 0;
+        for (int i = 0; i < nData; i++) {
+            System.out.print(n + ". ");
+            BufferedImage image = null;
+            image = ImageIO.read(new File(folderGenderTraining.listFiles()[i].toString()));
+            c = new SpatialPyramidCentrist();
+            c.extract(image);
+            if (n < 1300) {
+                dataTrain.add(c.getFeatureVector());
+            } else if (classGender[gen].equals("male")) {
+                dataTestMale.add(c.getFeatureVector());
+                nTest++;
+            } else {
+                dataTestFemale.add(c.getFeatureVector());
+                nTest++;
+            }
+            n++;
+        }
+
+        if (gen == 0) {
+            nMale = n;
+            CsvUtils.writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_male.csv");
+            CsvUtils.writeToCSV(dataTestMale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_male.csv");
+        } else {
+            nFemale = n;
+            CsvUtils.writeToCSV(dataTrain, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\train_female.csv");
+            CsvUtils.writeToCSV(dataTestFemale, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\test_female.csv");
+        }
+
+        nTotal = nMale + nFemale;
+
+        System.out.println("jml dataTrain = " + dataTrain.size());
+        System.out.println("jml dataTestMale = " + dataTestMale.size());
+        System.out.println("jml dataTestFemale = " + dataTestFemale.size());
+        System.out.println("nMale = " + nMale);
+        System.out.println("nFemale = " + nFemale);
+        System.out.println("nTotal = " + nTotal);
     }
 
     public static void getTrainTestData(int gen) {
@@ -187,13 +242,14 @@ public class Test {
 //        System.out.println("nTotal = " + nTotal);
     }
 
-    public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException {
+    public static void trainPCA() throws FileNotFoundException, UnsupportedEncodingException, IOException {
         modelPCA = new ArrayList<>();
         ArrayList<String[]> listData;
         for (int i = 0; i < classGender.length; i++) {
 //        for (int i = 0; i < 1; i++) {
+            getCentristLibData(i);
 //            getTrainTestData(i);
-            getTrainTestDataFromCSV(i);
+//            getTrainTestDataFromCSV(i);
             listData = new ArrayList<>();
             for (int j = 0; j < block; j++) {
                 System.out.println("======================================================");
@@ -339,14 +395,47 @@ public class Test {
     }
 
     public static void trainSVMsmo() throws Exception {
-        SVMweka svm = new SVMweka();
+        ConverterUtils.DataSource src = new ConverterUtils.DataSource(pathDataTrain);
+        Instances data_train = src.getDataSet();
+        data_train.setClass(data_train.attribute("class"));
 
-        svm.loadCSV(pathDataTrain);
-        svm.buildModel("weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K \'weka.classifiers.functions.supportVector.RBFKernel -C 250007 -G 5.0\' -calibrator \'weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4\'");
-        svm.saveModelToFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
-        svm.loadModelFromFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
-        Instances ins = svm.getInstances();
-        int n = 1;
+        SMO smo = new SMO();
+
+        //train and build classifier
+        RBFKernel rbf = new RBFKernel();
+        rbf.setGamma(sigma);
+        smo.setKernel(rbf);
+        smo.buildClassifier(data_train);
+
+        src = new ConverterUtils.DataSource(pathDataTest);
+        Instances data_test = src.getDataSet();
+        data_test.setClass(data_train.attribute("class"));
+        //test
+        Evaluation eva = new Evaluation(data_train);
+        eva.evaluateModel(smo, data_test);
+        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
+        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
+        double[][] confMatrix = eva.confusionMatrix();
+        System.out.println("male \t female");
+        for (int i = 0; i < confMatrix.length; i++) {
+            for (int j = 0; j < confMatrix[0].length; j++) {
+                System.out.print(confMatrix[i][j] + " \t ");
+            }
+            System.out.println("");
+        }
+
+//        SVMweka svm = new SVMweka();
+//
+//        svm.loadCSV(pathDataTrain);
+//        svm.buildModel();
+//        svm.saveModelToFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
+//        
+//        
+//        svm.loadModelFromFile("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_model.model");
+//        svm.predictForRow("1,5,10",",");
+//        
+//        Instances ins = svm.getInstances();
+//        int n = 1;
 //        for (Instance in : ins) {
 //            System.out.println("Predict Value Data - " + n + " : " + svm.classifyInstance(in));
 //            n++;
@@ -578,9 +667,9 @@ public class Test {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 //        cropFace();
 //        trainPCA();
-        trainSVMweka();
 //        testPCA();
-        testSVM();
+        trainSVMsmo();
+//        testSVM();
 
 //        ConverterUtils.DataSource source = new ConverterUtils.DataSource(pathDataTrain);
 //        Instances data_train = source.getDataSet();

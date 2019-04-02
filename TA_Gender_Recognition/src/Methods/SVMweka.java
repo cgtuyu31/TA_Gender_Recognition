@@ -7,7 +7,9 @@ package Methods;
 
 import java.io.File;
 import java.util.ArrayList;
-import weka.classifiers.functions.LibSVM;
+import static org.opencv.ml.SVM.RBF;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -21,7 +23,7 @@ import weka.core.converters.ConverterUtils;
  */
 public class SVMweka {
 
-    private LibSVM model;
+    private SMO model;
     private Instances data;
 
     /**
@@ -29,7 +31,7 @@ public class SVMweka {
      *
      * @return LibSVM model object that was loaded or trained.
      */
-    public LibSVM getModel() {
+    public SMO getModel() {
         return this.model;
     }
 
@@ -38,7 +40,7 @@ public class SVMweka {
      *
      * @return void
      */
-    public void setModel(LibSVM model) {
+    public void setModel(SMO model) {
         this.model = model;
     }
 
@@ -68,19 +70,21 @@ public class SVMweka {
      */
     public void loadCSV(String filename) {
         try {
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource(filename);
-            Instances data = source.getDataSet();
-//            CSVLoader trainingLoader = new CSVLoader();
-//            trainingLoader.setSource(new File(filename));
-//            trainingLoader.setNoHeaderRowPresent(true);
-//            data = trainingLoader.getDataSet();
+//            ConverterUtils.DataSource source = new ConverterUtils.DataSource(filename);
+//            Instances data = source.getDataSet();
+            CSVLoader trainingLoader = new CSVLoader();
+            trainingLoader.setSource(new File(filename));
+            trainingLoader.setNoHeaderRowPresent(false);
+            data = trainingLoader.getDataSet();
             if (data.classIndex() == -1) {
                 data.setClassIndex(data.numAttributes() - 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
+//CENTRIST COBAIN LIBRARY
+//SMO LIAT DI PERPUS PNY ALUMNI
     }
 
     /**
@@ -91,11 +95,14 @@ public class SVMweka {
      * @param options The SVM training options (or parameters).
      * @return void
      */
-    public void buildModel(String options) {
+    public void buildModel() {
         try {
-            model = new LibSVM();
-            String[] optionsArr = weka.core.Utils.splitOptions(options);
-            model.setOptions(optionsArr);
+            model = new SMO();
+            model.setOptions(weka.core.Utils.splitOptions("-C 1.0 -L 0.0010 -P 1.0E-12 -N 0 -V -1 -W 1 -K "
+                + "\"weka.classifiers.functions.supportVector.RBFKernel -C 250007 -G 0.01\""));
+//            RBFKernel rbf = new RBFKernel();
+//            rbf.setGamma(g);
+//            model.setKernel(rbf);
             model.buildClassifier(this.data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,7 +133,7 @@ public class SVMweka {
      */
     public void loadModelFromFile(String filename) {
         try {
-            model = (LibSVM) weka.core.SerializationHelper.read(filename);
+            model = (SMO) weka.core.SerializationHelper.read(filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,6 +166,7 @@ public class SVMweka {
                 atts.add(new Attribute("name" + t, t));
             }
 
+            Instances x = new Instances(data);
             Instances dataRaw = new Instances("TestInstances", atts, sz);
             dataRaw.add(new DenseInstance(1.0, raw));
             Instance first = dataRaw.firstInstance(); //System.out.println(first);
