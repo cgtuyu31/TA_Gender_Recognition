@@ -14,16 +14,16 @@ import java.util.ArrayList;
  */
 public class Normalization {
     
-    public static double[][] AListToArray(ArrayList<double[]> data){
-        double[][] tmp = new double[data.get(0).length][data.size()];
-        System.out.println("tmp[][] -> " + tmp.length + " - " + tmp[0].length);
-        for (int i = 0; i < data.get(0).length; i++) {
-            for (int j = 0; j < data.size(); j++) {
-                tmp[i][j] = data.get(j)[i];
-            }
-        }
-        return tmp;
-    }
+//    public static double[][] AListToArray(ArrayList<double[]> data){
+//        double[][] tmp = new double[data.get(0).length][data.size()];
+//        System.out.println("tmp[][] -> " + tmp.length + " - " + tmp[0].length);
+//        for (int i = 0; i < data.get(0).length; i++) {
+//            for (int j = 0; j < data.size(); j++) {
+//                tmp[i][j] = data.get(j)[i];
+//            }
+//        }
+//        return tmp;
+//    }
     
     public static double[] getChunkArray(double[] array, int chunkSize, int block) {
         int numOfChunks = (int)Math.ceil((double)array.length / chunkSize);

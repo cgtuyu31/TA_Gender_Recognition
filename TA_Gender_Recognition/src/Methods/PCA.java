@@ -3,8 +3,6 @@ package Methods;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 import static Methods.CsvUtils.getDataFromCSV;
-import static Methods.CsvUtils.getDataFromText2D;
-import static Methods.CsvUtils.writeToCSV;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,6 +22,40 @@ import java.util.Map;
 import java.util.Scanner;
 import org.opencv.core.Core;
 import ta_gender_recognition.GUI;
+import static Methods.CsvUtils.writeAListDoubleToCSV;
+import static Methods.CsvUtils.writeAListDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -47,7 +79,7 @@ public class PCA {
     static Matrix eigenVector; // M x M
     static Matrix eigenFace; // [nFeature x M] * [M x M] = nFeature x M
     static String gender;
-    static final String HEADER_PRINT = GUI.PATH_HEADER_TRAINING;
+    static final String HEADER_PRINT = GUI.PATH_TRAINING;
 
     public PCA(int K, int nFeature) {
         this.K = K;
@@ -68,25 +100,25 @@ public class PCA {
 
         //AVERAGE
         calcAvg();
-        writeToCSV(avg, HEADER_PRINT + "avg\\avg_" + block + "_" + gender + ".csv");
+        writeDoubleToCSV(avg, HEADER_PRINT + "avg\\avg_" + block + "_" + gender + ".csv");
 
         //NORMALIZE
         normalize();
-        writeToCSV(listNorm, HEADER_PRINT + "listNorm_" + gender + ".csv");
+        writeAListDoubleToCSV(listNorm, HEADER_PRINT + "listNorm_" + gender + ".csv");
 
         //COVARIANCE MATRIX
         calcCovarianceMatrix();
-        writeToCSV(matrixB, HEADER_PRINT + "matrixB_" + gender + ".csv");
-        writeToCSV(matrixB.transpose(), HEADER_PRINT + "matrixBtranspose_" + gender + ".csv");
-        writeToCSV(matrixCovariance, HEADER_PRINT + "matrixCovariance_" + gender + ".csv");
+        writeMatrixToCSV(matrixB, HEADER_PRINT + "matrixB_" + gender + ".csv");
+        writeMatrixToCSV(matrixB.transpose(), HEADER_PRINT + "matrixBtranspose_" + gender + ".csv");
+        writeMatrixToCSV(matrixCovariance, HEADER_PRINT + "matrixCovariance_" + gender + ".csv");
 
         //EIGEN VALUE & EIGEN VECTOR
         calcEigenValueAndVector();
-        writeToCSV(eigenVector, HEADER_PRINT + "EigenVec_" + gender + ".csv");
+        writeMatrixToCSV(eigenVector, HEADER_PRINT + "EigenVec_" + gender + ".csv");
 
         //EIGEN FACE
         calcEigenface();
-        writeToCSV(eigenFace, HEADER_PRINT + "eigenface\\EigenFace_" + block + "_" + gender + ".csv");
+        writeMatrixToCSV(eigenFace, HEADER_PRINT + "eigenface\\EigenFace_" + block + "_" + gender + ".csv");
 
         //WEIGHT
         calcWeight();
@@ -230,7 +262,7 @@ public class PCA {
 //        writer.close();
     }
 
-    public static String[] testing(double[] histImg, String gender, int block) throws FileNotFoundException, UnsupportedEncodingException, IOException {
+    public static String[] test(double[] histImg, String gender, int block) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         nFeature = histImg.length;
         StringBuilder builder = new StringBuilder();
         String path = "";
@@ -263,7 +295,7 @@ public class PCA {
         path = HEADER_PRINT + "eigenface\\EigenFace_" + block + "_" + gender + ".csv";
         Scanner sc = new Scanner(new BufferedReader(new FileReader(path)));
         double[][] eigenface = new double[nFeature][sc.nextLine().trim().split(",").length]; // nFeature x M
-        eigenface = getDataFromText2D(path, eigenface.length, eigenface[0].length);
+        eigenface = getDataFromText(path, eigenface.length, eigenface[0].length);
 //        BufferedReader in2 = new BufferedReader(new FileReader("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\eigenface_" + gender + ".txt"));
 //        String[] tokens = in2.readLine().split(";");
 //        double[][] eigenface = new double[nFeature][tokens.length]; // nFeature x M
@@ -335,7 +367,7 @@ public class PCA {
     public static void calcWeightMatrix() throws FileNotFoundException, UnsupportedEncodingException {
         //[K x nFeature] * [nFeature x 1] = [K x 1]
         Matrix weight = eigenFace.transpose().times(matrixB);
-        writeToCSV(weight, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_" + gender + ".csv");
+        writeMatrixToCSV(weight, "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_" + gender + ".csv");
     }
 
     //ini gadipake

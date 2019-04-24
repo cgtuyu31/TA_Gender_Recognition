@@ -54,7 +54,7 @@ public class CsvUtils {
         }
     }
     
-    public static void writeStringToCSV(ArrayList<String[]> lists, String path) {
+    public static void writeAListStringToCSV(ArrayList<String[]> lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.size(); i++) {
             for (int j = 0; j < lists.get(0).length; j++) {
@@ -74,7 +74,7 @@ public class CsvUtils {
         }
     }
     
-    public static void writeToCSV(ArrayList<double[]> lists, String path) {
+    public static void writeAListDoubleToCSV(ArrayList<double[]> lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.size(); i++) {
             for (int j = 0; j < lists.get(0).length; j++) {
@@ -94,7 +94,7 @@ public class CsvUtils {
         }
     }
 
-    public static void writeToCSV(double[] lists, String path) {
+    public static void writeDoubleToCSV(double[] lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.length; i++) {
             builder.append(lists[i] + ",");
@@ -111,7 +111,7 @@ public class CsvUtils {
         }
     }
 
-    public static void writeToCSV(Matrix lists, String path) {
+    public static void writeMatrixToCSV(Matrix lists, String path) {
         double[][] tmp = lists.getArray();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < tmp.length; i++) {
@@ -133,7 +133,7 @@ public class CsvUtils {
     }
 
     // n= baris, features = kolom
-    public static double[][] getDataFromText2D(String path, int n, int features) throws FileNotFoundException {
+    public static double[][] getDataFromText(String path, int n, int features) throws FileNotFoundException {
         Scanner sc = new Scanner(new BufferedReader(new FileReader(path)));
         double[][] data = new double[n][features];
         while (sc.hasNextLine()) {
@@ -147,7 +147,7 @@ public class CsvUtils {
         return data;
     }
 
-    public static ArrayList<double[]> getArrayListDataFromText2D(String path, int n, int features) throws FileNotFoundException {
+    public static ArrayList<double[]> getAListDataFromText(String path, int n, int features) throws FileNotFoundException {
         Scanner sc = new Scanner(new BufferedReader(new FileReader(path)));
 //        double[][] data = new double[n][features];
         ArrayList<double[]> data = new ArrayList<>();
@@ -165,7 +165,7 @@ public class CsvUtils {
     }
 
     // n= baris, features = kolom
-    public static String[][] getDataStringFromText2D(String path, int n, int features) throws FileNotFoundException {
+    public static String[][] getDataStringFromText(String path, int n, int features) throws FileNotFoundException {
         Scanner sc = new Scanner(new BufferedReader(new FileReader(path)));
         String[][] data = new String[n][features];
         while (sc.hasNextLine()) {
@@ -190,7 +190,7 @@ public class CsvUtils {
         }
         return data;
     }
-
+    
     public static double[] getDataFromCSV(String path, int n) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(path));
         String line;

@@ -34,15 +34,15 @@ public class Centrist {
     double histogram[];
     Mat img_ct;
     static int i = 0;
-    static int p = 0;
+//    static int p = 0;
 
     public Centrist() {
         img_ct = new Mat();
     }
 
     public void extract(Mat img) {
-        p = 0;
-        img_ct.create(img.size(), CV_8U);
+//        p = 0;
+//        img_ct.create(img.size(), CV_8U);
 
         histogram = new double[256];
         for (int i = 0; i < histogram.length; i++) {
@@ -84,20 +84,20 @@ public class Centrist {
                     ctValue += 128;
                 }
                 histogram[Math.min(ctValue, 255)]++;
-                img_ct.put(x, y, ctValue);
-                p++;
+//                img_ct.put(x, y, ctValue);
+//                p++;
             }
         }
-        Imgcodecs.imwrite("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\ct_male\\" + i + "_ct.jpg", img_ct);
+//        Imgcodecs.imwrite("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\ct_male\\" + i + "_ct.jpg", img_ct);
     }
 
     public double[] getHistogram() {
         return histogram;
     }
     
-    public static int getP(){
-        return p;
-    }
+//    public static int getP(){
+//        return p;
+//    }
 
     ///test
     public static void main(String[] args) {

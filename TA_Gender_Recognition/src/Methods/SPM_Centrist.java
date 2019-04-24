@@ -30,6 +30,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
+import sun.awt.image.WritableRasterNative;
 
 /**
  *
@@ -41,7 +42,8 @@ public class SPM_Centrist {
     static int block = 0;
     static int level = 2;
     static double[] histogram;
-    
+    static int type = 0;
+
     public SPM_Centrist() {
         int block = 0;
         for (int i = 0; i <= level; i++) {
@@ -58,56 +60,106 @@ public class SPM_Centrist {
         histogram = new double[histLength * block];
     }
 
-    private static Mat preprocessing(String imagePath) {
-//        //get img -> convert to YUV
-//        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_UNCHANGED);
-//        Mat img_yuv = new Mat();
-//        Imgproc.cvtColor(img_ori, img_yuv, Imgproc.COLOR_RGB2YCrCb);
-//
-//        // get the Y channel
-////        Mat img_y = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
-//        Mat img_y = new Mat();
-//        img_y.create(img_yuv.size(), CV_8U);
-//        for (int i = 0; i < img_yuv.rows(); i++) {
-//            for (int j = 0; j < img_yuv.cols(); j++) {
-//                img_y.put(i, j, img_yuv.get(i, j)[0]);
-//            }
-//        }
-//
-//        Mat img_y_sharpened = new Mat();
-//        img_y_sharpened.create(img_yuv.size(), CV_8U);
-//
-//        //sharpen image
-//        Imgproc.GaussianBlur(img_y, img_y_sharpened, new Size(0, 0), 3);
-//        Core.addWeighted(img_y, 1.5, img_y_sharpened, -0.5, 0, img_y_sharpened);
-//
-//        //calculate histogram
-//        double[] histH = createHist(img_y_sharpened);
-//        double[] test = new double[256];
-////MASIH SALAH INI BAGINYA GA RATA
-//        //divide histogram using Harmonic Mean
-//        int hm = harmonicMean(img_y_sharpened);
-//
-//        //apply HE on each histogram
-////        Mat img_hu = new Mat(img_y_sharpened.rows(), img_y_sharpened.cols(), img_y_sharpened.type());
-//        Imgproc.equalizeHist(histH, test);
-//        //concatenate histogram
-//        //smooth image
-//        //concatenate Y to UV
-//        //convert YUV to RGB
-        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
-        return img_ori;
+    public SPM_Centrist(int level, int type) {
+        this.type = type;
+        int block = 0;
+        for (int i = 0; i <= level; i++) {
+            block += Math.pow(2, (2 * i)) + Math.pow((Math.pow(2, i) - 1), 2);
+        }
+        histogram = new double[histLength * block];
     }
 
+    private static Mat preprocessingHE(String imagePath) {
+        //get img -> convert to YUV
+        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+
+        Mat img_sharpened = new Mat();
+        img_sharpened.create(img_ori.size(), CV_8U);
+
+        //sharpen image
+        Imgproc.GaussianBlur(img_ori, img_sharpened, new Size(0, 0), 3);
+        Core.addWeighted(img_ori, 1.5, img_sharpened, -0.5, 0, img_sharpened);
+
+        //caMat(img_y_sharpened.rows(), img_y_sharpened.cols(), img_y_sharpened.type());
+        Mat equalizedImg = new Mat();
+        Imgproc.equalizeHist(img_sharpened, equalizedImg);
+
+        //smooth image
+        Mat smoothedImg = new Mat();
+        Imgproc.GaussianBlur(equalizedImg, smoothedImg, new Size(0, 0), 3);
+
+//        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+        return smoothedImg;
+    }
+    
+    private static Mat preprocessingBHEP(String imagePath) {
+        //get img -> convert to YUV
+        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_UNCHANGED);
+        Mat img_yuv = new Mat();
+        Imgproc.cvtColor(img_ori, img_yuv, Imgproc.COLOR_RGB2YCrCb);
+
+        // get the Y channel
+//        Mat img_y = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img_y = new Mat();
+        img_y.create(img_yuv.size(), CV_8U);
+        for (int i = 0; i < img_yuv.rows(); i++) {
+            for (int j = 0; j < img_yuv.cols(); j++) {
+                img_y.put(i, j, img_yuv.get(i, j)[0]);
+            }
+        }
+
+        Mat img_y_sharpened = new Mat();
+        img_y_sharpened.create(img_yuv.size(), CV_8U);
+
+        //sharpen image
+        Imgproc.GaussianBlur(img_y, img_y_sharpened, new Size(0, 0), 3);
+        Core.addWeighted(img_y, 1.5, img_y_sharpened, -0.5, 0, img_y_sharpened);
+
+        //calculate histogram
+//        double[] histH = createHist(img_y_sharpened);
+//        double[] test = new double[256];
+//MASIH SALAH INI BAGINYA GA RATA
+        //divide histogram using Harmonic Mean
+//        int hm = harmonicMean(img_y_sharpened);
+        //apply HE on each histogram
+//        Mat img_hu = new Mat(img_y_sharpened.rows(), img_y_sharpened.cols(), img_y_sharpened.type());
+        Mat equalizedImg = new Mat();
+        Imgproc.equalizeHist(img_y_sharpened, equalizedImg);
+
+        //concatenate histogram
+        //smooth image
+        Mat smoothedImg = new Mat();
+        Imgproc.GaussianBlur(equalizedImg, smoothedImg, new Size(0, 0), 3);
+
+        //concatenate Y to UV
+        for (int i = 0; i < img_yuv.rows(); i++) {
+            for (int j = 0; j < img_yuv.cols(); j++) {
+                img_yuv.put(i, j, smoothedImg.get(i, j)[0]);
+            }
+        }
+
+        //convert YUV to RGB
+        Mat finalImg = new Mat();
+        Imgproc.cvtColor(img_yuv, finalImg, Imgproc.COLOR_YCrCb2RGB);
+
+//        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+        return finalImg;
+    }
+    
     public static void extract(String imagePath) {
-        Mat img = preprocessing(imagePath);
+        Mat img;
+        if (type == 0) {
+            img = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
+        } else if (type == 1) {
+            img = preprocessingHE(imagePath);
+        } else {
+            PreprocessingBHEP bhep = new PreprocessingBHEP();
+            img = bhep.getBHEP(imagePath);
+        }
         Mat cropImg;
         Mat resizedImg = new Mat();
         Size sz = new Size(250, 250);
-
-        if (level >= 0) {
-
-        }
+        
         // level 0:
         Centrist centrist = new Centrist();
         centrist.extract(img);
@@ -191,13 +243,29 @@ public class SPM_Centrist {
                 binPos++;
             }
         }
-        System.out.println("Extract CENTRIST "+imagePath+" DONE!!");
+        System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
     }
 
     public static double[] getHistogram() {
         return histogram;
     }
 
+    public static int getBlock() {
+        return block;
+    }
+
+    public void setBlock(int block) {
+        this.block = block;
+    }
+    
+    public static int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+    
     private static int harmonicMean(Mat img) {
         double n = img.rows() * img.cols();
 
@@ -242,18 +310,18 @@ public class SPM_Centrist {
         String[] pathCropGenderTrain = {
             "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_male",
             "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_female"};
-        Mat img_ori = c.preprocessing(path);
+        Mat img_ori = c.preprocessingHE(path);
         Imgcodecs.imwrite("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\img_y.jpg", img_ori);
 
         int count = 0;
-        System.out.println("path: "+path);
+        System.out.println("path: " + path);
         c.extract(path);
         for (int i = 0;
                 i < c.getHistogram().length; i++) {
             if (c.getHistogram()[i] == 0) {
                 count++;
             } else {
-                System.out.println(i+". "+c.getHistogram()[i]);
+                System.out.println(i + ". " + c.getHistogram()[i]);
             }
         }
 

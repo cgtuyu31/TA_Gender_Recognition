@@ -18,13 +18,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opencv.core.Core;
 import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataStringFromText2D;
-import static Methods.CsvUtils.writeToCSV;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Debug;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
+import static Methods.CsvUtils.writeAListDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeDoubleToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.writeMatrixToCSV;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataStringFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
+import static Methods.CsvUtils.getDataFromText;
 
 /**
  *
@@ -54,7 +69,7 @@ public class SupportVectorMachine {
         SupportVectorMachine svm = new SupportVectorMachine();
         svm.setSigma(sigma);
         try {
-            String[][] datatrain = getDataStringFromText2D(path, (n + 1), (features + 1));
+            String[][] datatrain = getDataStringFromText(path, (n + 1), (features + 1));
             double[][] data = new double[n][features];
             for (int i = 1; i < datatrain.length; i++) {
                 for (int j = 0; j < datatrain[0].length - 1; j++) {
@@ -117,7 +132,7 @@ public class SupportVectorMachine {
         String path = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\pca_train.csv";
         SupportVectorMachine svm = new SupportVectorMachine();
         try {
-            String[][] dataset = getDataStringFromText2D(path, (n + 1), (features + 1));
+            String[][] dataset = getDataStringFromText(path, (n + 1), (features + 1));
             double[][] data = new double[n][features];
 
             for (int i = 1; i < dataset.length; i++) {
@@ -147,7 +162,7 @@ public class SupportVectorMachine {
 
                 //get testing data, create RBF matrix test
                 String pathTest = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\testing.csv";
-                String[][] datasetTest = getDataStringFromText2D(pathTest, n + 1, (features + 1));
+                String[][] datasetTest = getDataStringFromText(pathTest, n + 1, (features + 1));
                 double[][] dataTest = new double[n][features];
 
                 for (int i = 1; i < datasetTest.length; i++) {

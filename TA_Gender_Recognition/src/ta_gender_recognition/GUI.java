@@ -5,17 +5,64 @@
  */
 package ta_gender_recognition;
 
+import Methods.CsvUtils;
+import Methods.FaceDetector;
+import Methods.Normalization;
+import Methods.PCA;
+import Methods.SPM_Centrist;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.supportVector.RBFKernel;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
+
 /**
  *
  * @author Tuyu
  */
 public class GUI extends javax.swing.JFrame {
-    public final static String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+
+    public static String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+    public static String PATH_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
     public final static String PATH_HEADER_DATASET = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\";
 //    public final static String PATH_HEADER_TRAINING = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Hasil_Training\\";
 //    public final static String PATH_HEADER_DATASET = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Dataset\\";
     public final static String[] classGender = {"male", "female",};
-    
+
+    private static String[] pathGenderTrain = {
+        PATH_HEADER_DATASET + "lfw_male",
+        PATH_HEADER_DATASET + "lfw_female"};
+    private static String[] pathCropGenderTrain = {
+        PATH_HEADER_DATASET + "crop_lfw_male",
+        PATH_HEADER_DATASET + "crop_lfw_female"};
+    private static int cType = 0;
+    private static String centristType = "centrist";
+    private static int nData = 1500;
+    private static int nTrain = 1300;
+    private static int nTest = nData - nTrain;
+    private static int totFeatures = 7936;
+    private static int block = 31;
+    private static final int pcaFeatures = 256;
+    private static int pcaK = 40;
+    private static double sigma = 0.01;
+    private static ArrayList<double[]> dataTrainMale;
+    private static ArrayList<double[]> dataTrainFemale;
+    private static ArrayList<double[]> dataTestMale;
+    private static ArrayList<double[]> dataTestFemale;
+
     /**
      * Creates new form GUI
      */
@@ -32,26 +79,490 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btn_cropFace = new javax.swing.JButton();
+        btn_Centrist = new javax.swing.JButton();
+        jLabel_cropFace = new javax.swing.JLabel();
+        jLabel_centrist = new javax.swing.JLabel();
+        jLabel_train = new javax.swing.JLabel();
+        btn_trainPCA = new javax.swing.JButton();
+        spin_kPCA = new javax.swing.JSpinner();
+        jLabel_kPCA = new javax.swing.JLabel();
+        jLabel_test = new javax.swing.JLabel();
+        btn_testPCA = new javax.swing.JButton();
+        jLabel_sigma = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        text_area_output = new javax.swing.JTextArea();
+        cb_centristType = new javax.swing.JComboBox<>();
+        txt_sigma = new javax.swing.JTextField();
+        btn_SVM = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        btn_cropFace.setText("Crop Face");
+        btn_cropFace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cropFaceActionPerformed(evt);
+            }
+        });
+
+        btn_Centrist.setText("CENTRIST");
+        btn_Centrist.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_CentristActionPerformed(evt);
+            }
+        });
+
+        jLabel_cropFace.setText("CROP FACE");
+
+        jLabel_centrist.setText("CENTRIST");
+
+        jLabel_train.setText("TRAINING");
+
+        btn_trainPCA.setText("Train PCA");
+        btn_trainPCA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_trainPCAActionPerformed(evt);
+            }
+        });
+
+        spin_kPCA.setValue(40);
+
+        jLabel_kPCA.setText("K : ");
+
+        jLabel_test.setText("TESTING");
+
+        btn_testPCA.setText("Test PCA");
+        btn_testPCA.setActionCommand("Test PCA");
+        btn_testPCA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_testPCAActionPerformed(evt);
+            }
+        });
+
+        jLabel_sigma.setText("Sigma : ");
+
+        text_area_output.setColumns(20);
+        text_area_output.setRows(5);
+        jScrollPane1.setViewportView(text_area_output);
+
+        cb_centristType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CENTRIST", "CENTRIST + HE", "CENTRIST + BHEP" }));
+        cb_centristType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_centristTypeActionPerformed(evt);
+            }
+        });
+
+        txt_sigma.setText("0.01");
+        txt_sigma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_sigmaActionPerformed(evt);
+            }
+        });
+
+        btn_SVM.setText("SVM");
+        btn_SVM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SVMActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_trainPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_testPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_cropFace, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_Centrist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cb_centristType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_SVM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_cropFace)
+                            .addComponent(jLabel_centrist)
+                            .addComponent(jLabel_train)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel_kPCA)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spin_kPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel_test))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel_sigma)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_sigma)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel_cropFace)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_cropFace)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel_centrist)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cb_centristType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_Centrist)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel_train)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(spin_kPCA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel_kPCA))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_trainPCA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel_test)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_testPCA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel_sigma)
+                            .addComponent(txt_sigma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_SVM))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_cropFaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cropFaceActionPerformed
+        // TODO add your handling code here:
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Crop Faces Data?", "Crop Face", JOptionPane.YES_NO_CANCEL_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            for (int i = 0; i < classGender.length; i++) {
+                File folderGenderTraining = new File(pathGenderTrain[i]);
+                for (int j = 0; j < folderGenderTraining.listFiles().length; j++) {
+                    FaceDetector faceDetector = new FaceDetector();
+                    Mat[] mats = faceDetector.snipFace(folderGenderTraining.listFiles()[j].toString(), new Size(250, 250));
+                    for (Mat mat : mats) {
+                        Imgcodecs.imwrite(pathCropGenderTrain[i] + "\\" + j + "_face.jpg", mat);
+                    }
+                }
+            }
+            System.out.println("- Detecting Face Done");
+            text_area_output.append("- Detecting Face Done\n");
+        } else {
+            System.out.println("- Detecting Face Canceled");
+            text_area_output.append("- Detecting Face Canceled\n");
+        }
+    }//GEN-LAST:event_btn_cropFaceActionPerformed
+
+    private void setCentType() {
+        setCType(cb_centristType.getSelectedIndex());
+        switch (getCType()) {
+            case 0:
+                setCentristType("centrist");
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centrist\\";
+                break;
+            case 1:
+                setCentristType("centristHE");
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centristHE\\";
+                break;
+            case 2:
+                setCentristType("centristBHEP");
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centristBHEP\\";
+                break;
+        }
+    }
+
+    private void btn_CentristActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CentristActionPerformed
+        // TODO add your handling code here:
+        setCentType();
+        text_area_output.append("- Processing " + cb_centristType.getSelectedItem() + "\n");
+
+        int n;
+        SPM_Centrist c = new SPM_Centrist(2);
+        c.setType(cb_centristType.getSelectedIndex());
+        setBlock(c.getBlock());
+        ArrayList<double[]> dataMale = new ArrayList<>();
+        ArrayList<double[]> dataFemale = new ArrayList<>();
+
+        for (int g = 0; g < classGender.length; g++) {
+            n = 0;
+            File folderGenderTraining = new File(pathCropGenderTrain[g]);
+            System.out.println("classGender = " + classGender[g]);
+            for (int i = 0; i < nData; i++) {
+                System.out.print(n + ". ");
+                c = new SPM_Centrist(2);
+                c.extract(folderGenderTraining.listFiles()[i].toString());
+                if (g == 0) {
+                    dataMale.add(c.getHistogram());
+                } else {
+                    dataFemale.add(c.getHistogram());
+                }
+                n++;
+            }
+
+            if (g == 0) {
+                CsvUtils.writeAListDoubleToCSV(dataMale, PATH_TRAINING + "data_" + getCentristType() + "_male.csv");
+                text_area_output.append("- Saved " + n + " " + cb_centristType.getSelectedItem() + " Data for Male\n");
+            } else {
+                CsvUtils.writeAListDoubleToCSV(dataFemale, PATH_TRAINING + "data_" + getCentristType() + "_female.csv");
+                text_area_output.append("- Saved " + n + " " + cb_centristType.getSelectedItem() + " Data for Female\n");
+            }
+        }
+    }//GEN-LAST:event_btn_CentristActionPerformed
+
+    public static void getDataFromCSV() throws FileNotFoundException {
+        ArrayList<double[]> data;
+        data = CsvUtils.getAListDataFromText(PATH_TRAINING + "data_" + getCentristType() + "_male.csv", nData, totFeatures);
+        dataTrainMale = new ArrayList<>(data.subList(0, nTrain));
+        dataTestMale = new ArrayList<>(data.subList(nTrain, nData));
+
+        data = CsvUtils.getAListDataFromText(PATH_TRAINING + "data_" + getCentristType() + "_female.csv", nData, totFeatures);
+        dataTrainFemale = new ArrayList<>(data.subList(0, nTrain));
+        dataTestFemale = new ArrayList<>(data.subList(nTrain, nData));
+//        dataTrain.addAll(getArrayListDataFromText2D(pathDataCENTRIST2[gen], nTest, features));
+    }
+
+    private void btn_trainPCAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_trainPCAActionPerformed
+        // TODO add your handling code here:
+        setCentType();
+        if ((int) spin_kPCA.getValue() != 0) {
+            pcaK = (int) spin_kPCA.getValue();
+        }
+        text_area_output.append("- Train " + cb_centristType.getSelectedItem() + " - PCA ( k = " + pcaK + " )\n");
+        try {
+            getDataFromCSV();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        trainPCA();
+    }//GEN-LAST:event_btn_trainPCAActionPerformed
+
+    private void btn_testPCAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_testPCAActionPerformed
+        try {
+            // TODO add your handling code here:
+            setCentType();
+            if ((int) spin_kPCA.getValue() != 0) {
+                pcaK = (int) spin_kPCA.getValue();
+            }
+            text_area_output.append("- Test " + cb_centristType.getSelectedItem() + " - PCA ( k = " + pcaK + " )\n");
+            getDataFromCSV();
+            testPCA();
+        } catch (IOException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_testPCAActionPerformed
+
+    private void trainPCA() {
+        ArrayList<String[]> modelPCA = new ArrayList<>();
+        ArrayList<String[]> listData;
+        ArrayList<double[]> dataTrain;
+        for (int i = 0; i < classGender.length; i++) {
+            if (i == 0) {
+                dataTrain = dataTrainMale;
+            } else {
+                dataTrain = dataTrainFemale;
+            }
+            listData = new ArrayList<>();
+            for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Block : " + (j + 1));
+                ArrayList<double[]> tmp = new ArrayList<>();
+                for (double[] tes : dataTrain) {
+                    tmp.add(Normalization.getChunkArray(tes, pcaFeatures, j));
+                }
+
+                PCA pca = new PCA(pcaK, pcaFeatures);
+                try {
+                    pca.train(tmp, classGender[i], j);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                ArrayList<String[]> weights = pca.getListWeight();
+                CsvUtils.writeAListStringToCSV(weights, PATH_TRAINING + "blocks\\block_" + j + "_" + classGender[i] + ".csv");
+                System.out.println("weight.size : " + weights.size());
+                System.out.println("weight[0].length : " + weights.get(0).length);
+                if (j == 0) {
+                    listData.addAll(weights);
+                } else {
+                    for (int k = 0; k < weights.size(); k++) {
+                        String[] tmp1 = listData.get(k);
+                        String[] result = new String[(block * pcaK) + 1];
+                        System.arraycopy(tmp1, 0, result, 0, tmp1.length);
+                        System.arraycopy(weights.get(k), 0, result, j * pcaK, weights.get(k).length);
+                        listData.set(k, result);
+                    }
+                }
+                System.out.println("listData.size : " + listData.size());
+                System.out.println("listData[0].length : " + listData.get(0).length);
+                System.out.println("listData[length-1] : " + listData.get(0)[listData.get(0).length - 1]);
+            }
+            for (int k = 0; k < listData.size(); k++) {
+                listData.get(k)[listData.get(k).length - 1] = classGender[i];
+            }
+            modelPCA.addAll(listData);
+            System.out.println("modelPCA size : " + modelPCA.size());
+            System.out.println("modelPCA[].length : " + modelPCA.get(0).length);
+            text_area_output.append("- Saved Train PCA Model for " + classGender[i] + "\n");
+        }
+        CsvUtils.writeToCSVwithLabel(modelPCA, PATH_TRAINING + getCentristType() + "_pca_" + pcaK + "_train.csv");
+    }
+
+    private void testPCA() throws UnsupportedEncodingException, IOException {
+        ArrayList<String[]> dataTest = new ArrayList<>();
+        PCA pca;
+        String[] weightTest;
+        for (int i = 0; i < dataTestMale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestMale.get(i), classGender[0]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Male " + (i + 1) + " - Block : " + (j + 1));
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestMale.get(i), pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.test(tmp, classGender[0], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[0];
+            }
+            dataTest.add(weightTest);
+        }
+        for (int i = 0; i < dataTestFemale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestFemale.get(j), classGender[1]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Female " + (i + 1) + " - Block : " + (j + 1));
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestFemale.get(i), pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.test(tmp, classGender[1], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[1];
+            }
+            dataTest.add(weightTest);
+        }
+
+        text_area_output.append("- Saved Test PCA Model\n");
+        CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "pca_test.csv");
+    }
+
+    private void testSVM() {
+        ConverterUtils.DataSource src = null;
+        Instances data_train = null;
+        Instances data_test = null;
+        Evaluation eva = null;
+
+        try {
+            src = new ConverterUtils.DataSource(PATH_TRAINING + getCentristType() + "_pca_" + pcaK + "_train.csv");
+            data_train = src.getDataSet();
+            data_train.setClass(data_train.attribute("class"));
+            SMO smo = new SMO();
+
+            //train and build classifier
+            RBFKernel rbf = new RBFKernel();
+            rbf.setGamma(sigma);
+            smo.setKernel(rbf);
+            smo.buildClassifier(data_train);
+
+            src = new ConverterUtils.DataSource(PATH_TRAINING + "pca_test.arff");
+            data_test = src.getDataSet();
+            data_test.setClass(data_train.attribute("class"));
+            //test
+            eva = new Evaluation(data_train);
+            eva.evaluateModel(smo, data_test);
+        } catch (Exception ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        text_area_output.append("- Correctly Classified Instances : " + eva.pctCorrect() + "\n");
+        text_area_output.append("- Incorrectly Classified Instances : " + eva.pctIncorrect() + "\n");
+        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
+        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
+        double[][] confMatrix = eva.confusionMatrix();
+        text_area_output.append("- male \t female \n");
+        System.out.println("male \t female");
+        for (int i = 0; i < confMatrix.length; i++) {
+            for (int j = 0; j < confMatrix[0].length; j++) {
+                text_area_output.append("- " + confMatrix[i][j] + " \t");
+                System.out.print(confMatrix[i][j] + " \t ");
+            }
+            text_area_output.append(" \n");
+            System.out.println("");
+        }
+        text_area_output.append("---------------------------------------------------------------\n");
+    }
+
+    private void cb_centristTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_centristTypeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cb_centristTypeActionPerformed
+
+    private void txt_sigmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_sigmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_sigmaActionPerformed
+
+    private void btn_SVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SVMActionPerformed
+        // TODO add your handling code here:
+        setCentType();
+        try {
+            if (!txt_sigma.getText().equalsIgnoreCase("")) {
+                setSigma(Double.parseDouble(txt_sigma.getText()));
+                text_area_output.append("- Test " + cb_centristType.getSelectedItem() + " - SVM ( sigma = " + sigma + " )\n");
+                getDataFromCSV();
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        testSVM();
+    }//GEN-LAST:event_btn_SVMActionPerformed
+
+    public static double getSigma() {
+        return sigma;
+    }
+
+    public void setSigma(double sigma) {
+        this.sigma = sigma;
+    }
+
+    public static int getCType() {
+        return cType;
+    }
+
+    public void setCType(int cType) {
+        this.cType = cType;
+    }
+
+    public static String getCentristType() {
+        return centristType;
+    }
+
+    public static int getBlock() {
+        return block;
+    }
+
+    public void setBlock(int block) {
+        this.block = block;
+    }
+
+    public void setCentristType(String centristType) {
+        this.centristType = centristType;
+    }
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws FileNotFoundException {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -62,19 +573,26 @@ public class GUI extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -84,5 +602,21 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_Centrist;
+    private javax.swing.JButton btn_SVM;
+    private javax.swing.JButton btn_cropFace;
+    private javax.swing.JButton btn_testPCA;
+    private javax.swing.JButton btn_trainPCA;
+    private javax.swing.JComboBox<String> cb_centristType;
+    private javax.swing.JLabel jLabel_centrist;
+    private javax.swing.JLabel jLabel_cropFace;
+    private javax.swing.JLabel jLabel_kPCA;
+    private javax.swing.JLabel jLabel_sigma;
+    private javax.swing.JLabel jLabel_test;
+    private javax.swing.JLabel jLabel_train;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner spin_kPCA;
+    private javax.swing.JTextArea text_area_output;
+    private javax.swing.JTextField txt_sigma;
     // End of variables declaration//GEN-END:variables
 }

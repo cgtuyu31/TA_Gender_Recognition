@@ -67,17 +67,17 @@ public class FaceDetector {
         listFile(folder);
     }
 
-    public static void initHaarCascade() {
-        String url = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\GenderRecognizer-master\\src\\res\\knowledge";
-
-        faceCascade = new CascadeClassifier(url);
-
-        if (faceCascade.load("src/res/haarcascade_frontalface_alt.xml")) {
-            System.out.println("Successfully Load Face Cascade");
-        } else {
-            System.out.println("Failed Load Face Cascade");
-        }
-    }
+//    public static void initHaarCascade() {
+//        String url = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\GenderRecognizer-master\\src\\res\\knowledge";
+//
+//        faceCascade = new CascadeClassifier(url);
+//
+//        if (faceCascade.load("src/res/haarcascade_frontalface_alt.xml")) {
+//            System.out.println("Successfully Load Face Cascade");
+//        } else {
+//            System.out.println("Failed Load Face Cascade");
+//        }
+//    }
 
     public static void listFile(final File folder) {
         int i = 0;
