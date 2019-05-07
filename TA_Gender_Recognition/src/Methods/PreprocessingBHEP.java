@@ -60,22 +60,12 @@ public class PreprocessingBHEP {
         Imgproc.GaussianBlur(img_y, img_y_sharpened, new Size(0, 0), 3);
         Core.addWeighted(img_y, 1.5, img_y_sharpened, -0.5, 0, img_y_sharpened);
 
+        //bhep
         BufferedImage imgBHEP = mat2Img(img_y_sharpened);
         imgBHEP = equalizeBHEP(imgBHEP);
 
         Mat equalizedImg = img2Mat(imgBHEP);
 
-        //calculate histogram
-//        double[] histH = createHist(img_y_sharpened);
-//        double[] test = new double[256];
-//MASIH SALAH INI BAGINYA GA RATA
-        //divide histogram using Harmonic Mean
-//        int hm = harmonicMean(img_y_sharpened);
-        //apply HE on each histogram
-//        Mat img_hu = new Mat(img_y_sharpened.rows(), img_y_sharpened.cols(), img_y_sharpened.type());
-//        Mat equalizedImg = new Mat();
-//        Imgproc.equalizeHist(img_y_sharpened, equalizedImg);
-        //concatenate histogram
         //smooth image
         Mat smoothedImg = new Mat();
         Imgproc.GaussianBlur(equalizedImg, smoothedImg, new Size(0, 0), 3);
@@ -159,7 +149,7 @@ public class PreprocessingBHEP {
             arr[i] = (float) (chistogram[i] * 255.0 / (float) totpix);
         }
 
-        write_histogram_cpf(arr);
+        write_new_histogram(arr);
 
         for (int x = 0; x < wr.getWidth(); x++) {
             for (int y = 0; y < wr.getHeight(); y++) {
@@ -181,17 +171,20 @@ public class PreprocessingBHEP {
         int totpix2 = 0;
 
         int[] histogram = new int[256];
-
+        
+        //frekuensi derajat keabuan
         for (int x = 0; x < wr.getWidth(); x++) {
             for (int y = 0; y < wr.getHeight(); y++) {
                 histogram[wr.getSample(x, y, 0)]++;
             }
         }
 
+        //hitung nilai tengah dengan Harmonic Mean
         int hm = harmonicMean(histogram);
-
-        write_histogramBHEP(histogram);
-
+        
+        write_histogramBHEPawal(histogram);
+        
+        //distribusi kumulatif hist1
         int[] chist1 = new int[hm];
 //        System.out.println("chist1 length " + chist1.length);
         chist1[0] = histogram[0];
@@ -201,6 +194,7 @@ public class PreprocessingBHEP {
         totpix1 = chist1[hm - 1];
 //        System.out.println("chist1 total " + chist1[hm - 1]);
 
+        //distribusi kumulatif hist2
         int[] chist2 = new int[histogram.length - hm];
 //        System.out.println("chist2 length " + chist2.length);
         chist2[0] = histogram[hm];
@@ -209,20 +203,20 @@ public class PreprocessingBHEP {
         }
         totpix2 = chist2[256 - hm - 1];
 //        System.out.println("chist2 total " + chist2[256 - hm - 1]);
-
+        
+        //hitung nilai keabuan baru dengan persamaan 2.9 untuk setiap histogram
         float[] arr = new float[256];
         for (int i = 0; i < hm; i++) {
-//            arr[i] = (float) (chist1[i] * (255) / (float) totpix1);
             arr[i] = (float) (chist1[i] * (hm - 1) / (float) totpix1);
         }
         for (int i = hm; i < 256; i++) {
-//            arr[i] = (float) (chist2[i - hm] * (255) / (float) totpix2);
             arr[i] = (float) (chist2[i - hm] * (256 - hm - 1) / (float) totpix2);
         }
 
 //        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 1, histLength);
-        write_histogram_cpf(arr);
-
+        write_new_histogram(arr);
+        
+        //ubah dengan nilai keabuan baru
         for (int x = 0; x < wr.getWidth(); x++) {
             for (int y = 0; y < wr.getHeight(); y++) {
                 int nVal = (int) arr[wr.getSample(x, y, 0)];
@@ -274,7 +268,7 @@ public class PreprocessingBHEP {
         writer.close();
     }
 
-    public static void write_histogramBHEP(int[] arr) {
+    public static void write_histogramBHEPawal(int[] arr) {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter("histogramBHEP.txt", "UTF-8");
@@ -290,7 +284,7 @@ public class PreprocessingBHEP {
         writer.close();
     }
 
-    public static void write_histogram_cpf(float[] arr) {
+    public static void write_new_histogram(float[] arr) {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter("histogram_equalized.txt", "UTF-8");

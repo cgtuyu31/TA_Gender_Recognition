@@ -791,9 +791,8 @@ public class Test {
                     classList[i] = -1.0;
                 }
             }
-
-            String modelPath = model_path + sigma + "_model-" + classes[index] + ".txt";
-            double[] solutions = getDataFromText(modelPath, data_train.size() + 1);
+            
+            double[] solutions = getDataFromText(model_path+classes[index]+".txt", data_train.size() + 1);
 
             //get testing data, create RBF matrix test
             for (int i = 0; i < data_test.size(); i++) {
@@ -1112,18 +1111,18 @@ public class Test {
 //        cropFace();
 //        trainPCA();
 //        testPCA();
-//        ConverterUtils.DataSource source = new ConverterUtils.DataSource(pathDataTrain);
-//        Instances data_train = source.getDataSet();
-//        source = new ConverterUtils.DataSource(pathDataTest);
-//        Instances data_test = source.getDataSet();
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(pathDataTrain);
+        Instances data_train = source.getDataSet();
+        source = new ConverterUtils.DataSource(pathDataTest);
+        Instances data_test = source.getDataSet();
 
 //        trainSVM();
-//        SVM_Test_Confusion(data_train, data_test, sigma, 1240,
-//                "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svmTestConf_" + features + "_sigma-" + sigma + "_model.txt");
+        SVM_Test_Confusion(data_train, data_test, sigma, 1240,
+                "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\svm_" + features + "_sigma-" + sigma + "_model-");
 //        testSVM();
 //        trainSVMsmo();
-        trainSVMdos();
-        testSVMdos();
+//        trainSVMdos();
+//        testSVMdos();
 
 //        ArrayList<Integer> test = new ArrayList<>();
 //        test.add(0);

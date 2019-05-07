@@ -25,36 +25,7 @@ import ta_gender_recognition.GUI;
 import static Methods.CsvUtils.writeAListDoubleToCSV;
 import static Methods.CsvUtils.writeAListDoubleToCSV;
 import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
-import static Methods.CsvUtils.writeDoubleToCSV;
 import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.writeMatrixToCSV;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
-import static Methods.CsvUtils.getDataFromText;
 import static Methods.CsvUtils.getDataFromText;
 
 /*
@@ -164,7 +135,6 @@ public class PCA {
         }
 
         matrixB = new Matrix(tmp); //nFeature x M(jml data)
-        //klo data udh 1500 ganti jd
         matrixCovariance = matrixB.transpose().times(matrixB); // [M x nFeature] * [nFeature x M] = M x M
 //        matrixCovariance = matrixB.times(matrixB.transpose()); // [M x nFeature] * [nFeature x M] = M x M
     }
@@ -229,7 +199,6 @@ public class PCA {
         StringBuilder builder = new StringBuilder();
         listWeight = new ArrayList<>();
 
-        //[K x nFeature] * [nFeature x 1] = [K x 1]
         System.out.println("listNorm size : " + listNorm.size());
         weight = new double[K];
         System.out.println("weight.length : " + weight.length);

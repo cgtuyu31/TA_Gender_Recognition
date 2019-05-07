@@ -35,8 +35,8 @@ import weka.core.converters.ConverterUtils;
  */
 public class GUI extends javax.swing.JFrame {
 
-    public static String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
-    public static String PATH_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+    public static final String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+    public static String PATH_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\centrist\\k-40\\";
     public final static String PATH_HEADER_DATASET = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\";
 //    public final static String PATH_HEADER_TRAINING = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Hasil_Training\\";
 //    public final static String PATH_HEADER_DATASET = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Dataset\\";
@@ -262,18 +262,19 @@ public class GUI extends javax.swing.JFrame {
 
     private void setCentType() {
         setCType(cb_centristType.getSelectedIndex());
+        setPcaK((int) spin_kPCA.getValue());
         switch (getCType()) {
             case 0:
                 setCentristType("centrist");
-                PATH_TRAINING = PATH_HEADER_TRAINING + "centrist\\";
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centrist\\k-" + getPcaK() + "\\";
                 break;
             case 1:
                 setCentristType("centristHE");
-                PATH_TRAINING = PATH_HEADER_TRAINING + "centristHE\\";
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centristHE\\k-" + getPcaK() + "\\";
                 break;
             case 2:
                 setCentristType("centristBHEP");
-                PATH_TRAINING = PATH_HEADER_TRAINING + "centristBHEP\\";
+                PATH_TRAINING = PATH_HEADER_TRAINING + "centristBHEP\\k-" + getPcaK() + "\\";
                 break;
         }
     }
@@ -293,9 +294,11 @@ public class GUI extends javax.swing.JFrame {
         for (int g = 0; g < classGender.length; g++) {
             n = 0;
             File folderGenderTraining = new File(pathCropGenderTrain[g]);
+            String[] fileName = new String[nData];
             System.out.println("classGender = " + classGender[g]);
             for (int i = 0; i < nData; i++) {
-                System.out.print(n + ". ");
+                fileName[i] = folderGenderTraining.listFiles()[i].getName();
+//                System.out.println(n + ". Extract CENTRIST " + folderGenderTraining.listFiles()[i].getName()+ " DONE!!");
                 c = new SPM_Centrist(2);
                 c.extract(folderGenderTraining.listFiles()[i].toString());
                 if (g == 0) {
@@ -308,9 +311,11 @@ public class GUI extends javax.swing.JFrame {
 
             if (g == 0) {
                 CsvUtils.writeAListDoubleToCSV(dataMale, PATH_TRAINING + "data_" + getCentristType() + "_male.csv");
+                CsvUtils.writeStringToCSV(fileName, PATH_TRAINING + "dataName_" + getCentristType() + "_male.csv");
                 text_area_output.append("- Saved " + n + " " + cb_centristType.getSelectedItem() + " Data for Male\n");
             } else {
                 CsvUtils.writeAListDoubleToCSV(dataFemale, PATH_TRAINING + "data_" + getCentristType() + "_female.csv");
+                CsvUtils.writeStringToCSV(fileName, PATH_TRAINING + "dataName_" + getCentristType() + "_female.csv");
                 text_area_output.append("- Saved " + n + " " + cb_centristType.getSelectedItem() + " Data for Female\n");
             }
         }
@@ -411,7 +416,7 @@ public class GUI extends javax.swing.JFrame {
             modelPCA.addAll(listData);
             System.out.println("modelPCA size : " + modelPCA.size());
             System.out.println("modelPCA[].length : " + modelPCA.get(0).length);
-            text_area_output.append("- Saved Train PCA Model for " + classGender[i] + "\n");
+            text_area_output.append("- Saved Train PCA Model (K = " + pcaK + ") for " + classGender[i] + "\n");
         }
         CsvUtils.writeToCSVwithLabel(modelPCA, PATH_TRAINING + getCentristType() + "_pca_" + pcaK + "_train.csv");
     }
@@ -457,12 +462,12 @@ public class GUI extends javax.swing.JFrame {
         CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "pca_test.csv");
     }
 
-    private void testSVM() {
+    private void testSVM() throws Exception {
         ConverterUtils.DataSource src = null;
         Instances data_train = null;
         Instances data_test = null;
         Evaluation eva = null;
-
+        double[] prediction = null;
         try {
             src = new ConverterUtils.DataSource(PATH_TRAINING + getCentristType() + "_pca_" + pcaK + "_train.csv");
             data_train = src.getDataSet();
@@ -480,27 +485,39 @@ public class GUI extends javax.swing.JFrame {
             data_test.setClass(data_train.attribute("class"));
             //test
             eva = new Evaluation(data_train);
-            eva.evaluateModel(smo, data_test);
+            prediction = eva.evaluateModel(smo, data_test);
         } catch (Exception ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        text_area_output.append("- Correctly Classified Instances : " + eva.pctCorrect() + "\n");
-        text_area_output.append("- Incorrectly Classified Instances : " + eva.pctIncorrect() + "\n");
-        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
-        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
-        double[][] confMatrix = eva.confusionMatrix();
-        text_area_output.append("- male \t female \n");
-        System.out.println("male \t female");
-        for (int i = 0; i < confMatrix.length; i++) {
-            for (int j = 0; j < confMatrix[0].length; j++) {
-                text_area_output.append("- " + confMatrix[i][j] + " \t");
-                System.out.print(confMatrix[i][j] + " \t ");
+        for (int i = 0; i < eva.numInstances(); i++) {
+            double realVal = data_test.instance(i).classValue();
+            if (realVal != prediction[i]) {
+                text_area_output.append("- Data " + (i + 1) + " " + data_test.instance(i).stringValue(data_test.attribute("class")));
+                text_area_output.append(" - Prediction : False");
+                text_area_output.append("\n");
             }
-            text_area_output.append(" \n");
-            System.out.println("");
         }
-        text_area_output.append("---------------------------------------------------------------\n");
+
+        text_area_output.append("-------------------------------------------------------------------------------------\n");
+        text_area_output.append("- Accuracy : " + eva.pctCorrect() + "%\n");
+        text_area_output.append("- Misclassification Rate : " + eva.pctIncorrect() + "%\n");
+        text_area_output.append(eva.toMatrixString(""));
+
+//        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
+//        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
+//        double[][] confMatrix = eva.confusionMatrix();
+//        text_area_output.append("- male \t female \n");
+//        System.out.println("male \t female");
+//        for (int i = 0; i < confMatrix.length; i++) {
+//            for (int j = 0; j < confMatrix[0].length; j++) {
+//                text_area_output.append("- " + confMatrix[i][j] + " \t");
+//                System.out.print(confMatrix[i][j] + " \t ");
+//            }
+//            text_area_output.append(" \n");
+//            System.out.println("");
+//        }
+        text_area_output.append("-------------------------------------------------------------------------------------\n");
     }
 
     private void cb_centristTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_centristTypeActionPerformed
@@ -517,13 +534,18 @@ public class GUI extends javax.swing.JFrame {
         try {
             if (!txt_sigma.getText().equalsIgnoreCase("")) {
                 setSigma(Double.parseDouble(txt_sigma.getText()));
-                text_area_output.append("- Test " + cb_centristType.getSelectedItem() + " - SVM ( sigma = " + sigma + " )\n");
+                text_area_output.append("- Test " + cb_centristType.getSelectedItem() + " (K = " + pcaK + ") - SVM ( sigma = " + sigma + " )\n");
+                text_area_output.append("-------------------------------------------------------------------------------------\n");
                 getDataFromCSV();
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        testSVM();
+        try {
+            testSVM();
+        } catch (Exception ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_SVMActionPerformed
 
     public static double getSigma() {
@@ -540,6 +562,14 @@ public class GUI extends javax.swing.JFrame {
 
     public void setCType(int cType) {
         this.cType = cType;
+    }
+
+    public void setPcaK(int pcaK) {
+        this.pcaK = pcaK;
+    }
+
+    public static int getPcaK() {
+        return pcaK;
     }
 
     public static String getCentristType() {

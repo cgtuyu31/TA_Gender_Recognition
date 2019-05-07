@@ -22,7 +22,7 @@ import org.opencv.objdetect.Objdetect;
  *
  * @author Tuyu
  */
-public class FaceDetector {
+public class ManualFaceDetector {
     
     private static CascadeClassifier faceCascade;
     
@@ -49,7 +49,7 @@ public class FaceDetector {
         String HumanFace = "src/res/knowledge/haarcascade_frontalface_alt.xml";
         
         CascadeClassifier cascadeClassifier = new CascadeClassifier(HumanFace);
-        cascadeClassifier.detectMultiScale(matImage, faces, 1.1, 10, Objdetect.CASCADE_DO_CANNY_PRUNING, new Size(20, 20),
+        cascadeClassifier.detectMultiScale(matImage, faces, 1, 10, Objdetect.CASCADE_DO_CANNY_PRUNING, new Size(20, 20),
                 matImage.size());
 
         //System.out.println(faces.dump());///test
@@ -87,7 +87,7 @@ public class FaceDetector {
                 System.out.println(fileEntry.getName());
             } else {
                 System.out.println(fileEntry.getAbsolutePath());
-                FaceDetector faceDetector = new FaceDetector();
+                ManualFaceDetector faceDetector = new ManualFaceDetector();
                 Mat[] mats = faceDetector.snipFace(fileEntry.getAbsolutePath(), new Size(250, 250));
                 
                 for (Mat mat : mats) {

@@ -91,7 +91,7 @@ public class SPM_Centrist {
 //        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
         return smoothedImg;
     }
-    
+
     private static Mat preprocessingBHEP(String imagePath) {
         //get img -> convert to YUV
         Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_UNCHANGED);
@@ -174,6 +174,7 @@ public class SPM_Centrist {
 //        Mat resizeImg = new Mat();
 //        Size sz = new Size(250, 250);
 //        Imgproc.resize(cropImg, resizeImg, sz);
+//      liat di gambar 2.2 level 1
         Rect rectCrop = new Rect(0, 0, w, h);
         //--- resize
         cropImg = new Mat(img, rectCrop);
@@ -206,7 +207,7 @@ public class SPM_Centrist {
         centrist.extract(resizedImg);
         System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 4, histLength);
 
-        // and that's the additional sub image in level one:
+        // tambahan sub image di level 1 (bagian tengah)
         rectCrop = new Rect(w / 2, h / 2, w, h);
         //--- resize
         cropImg = new Mat(img, rectCrop);
@@ -218,7 +219,7 @@ public class SPM_Centrist {
         // level 2:
         int wstep = img.cols() / 4;
         int hstep = img.rows() / 4;
-        int binPos = 6; // the next free section in the histogram
+        int emptyPos = 6; // posisi selanjutnya di histogram utama
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 rectCrop = new Rect(i * wstep, j * hstep, wstep, hstep);
@@ -227,8 +228,8 @@ public class SPM_Centrist {
                 Imgproc.resize(cropImg, resizedImg, sz);
                 //resize ---
                 centrist.extract(resizedImg);
-                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * binPos, histLength);
-                binPos++;
+                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
+                emptyPos++;
             }
         }
         for (int i = 0; i < 3; i++) {
@@ -239,11 +240,11 @@ public class SPM_Centrist {
                 Imgproc.resize(cropImg, resizedImg, sz);
                 //resize ---
                 centrist.extract(resizedImg);
-                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * binPos, histLength);
-                binPos++;
+                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
+                emptyPos++;
             }
         }
-        System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
+//        System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
     }
 
     public static double[] getHistogram() {
