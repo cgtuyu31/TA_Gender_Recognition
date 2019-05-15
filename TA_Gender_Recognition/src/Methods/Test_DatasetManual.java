@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -30,7 +31,7 @@ import weka.core.converters.ConverterUtils;
  *
  * @author Tuyu
  */
-public class TestPrasidang {
+public class Test_DatasetManual {
 
     private static String[] pathCropGenderTrain = {
         GUI.PATH_HEADER_DATASET + "manual_crop_male",
@@ -38,30 +39,17 @@ public class TestPrasidang {
     private static String[] pathGenderTrain = {
         GUI.PATH_HEADER_DATASET + "manual_male",
         GUI.PATH_HEADER_DATASET + "manual_female"};
-    private static int nData = 12;
+    private static int nData = 76;
     private static String PATH_TRAINING = GUI.PATH_HEADER_TRAINING + "centrist\\k-40\\";
+    private static String PATH_TRAINING_BHEP = GUI.PATH_HEADER_TRAINING + "centristBHEP\\k-40\\";
     private static int block = 31;
-    private static int nTest = 12;
+    private static int nTest = 76;
     private static ArrayList<double[]> dataTestMale;
     private static ArrayList<double[]> dataTestFemale;
     private static int totFeatures = 7936;
     private static int pcaK = 40;
     private static final int pcaFeatures = 256;
     private static double sigma = 0.01;
-
-    public static void cropFace() {
-        for (int i = 0; i < classGender.length; i++) {
-            File folderGenderTraining = new File(pathGenderTrain[i]);
-            for (int j = 0; j < folderGenderTraining.listFiles().length; j++) {
-                ManualFaceDetector faceDetector = new ManualFaceDetector();
-                Mat[] mats = faceDetector.snipFace(folderGenderTraining.listFiles()[j].toString(), new Size(750, 750));
-                for (Mat mat : mats) {
-                    Imgcodecs.imwrite(pathCropGenderTrain[i] + "\\" + j + "_face.jpg", mat);
-                }
-            }
-        }
-        System.out.println("- Detecting Face Done");
-    }
 
     public static void centrist() {
         int n;
@@ -76,10 +64,10 @@ public class TestPrasidang {
             String[] fileName = new String[nData];
             System.out.println("classGender = " + classGender[g]);
             for (int i = 0; i < nData; i++) {
-                fileName[i] = folderGenderTraining.listFiles()[i].getName();
-//                System.out.println(n + ". Extract CENTRIST " + folderGenderTraining.listFiles()[i].getName()+ " DONE!!");
                 c = new SPM_Centrist(2);
                 c.extract(folderGenderTraining.listFiles()[i].toString());
+                fileName[i] = folderGenderTraining.listFiles()[i].getName();
+                Mat mat = Imgcodecs.imread(folderGenderTraining.listFiles()[i].toString(), Imgcodecs.IMREAD_GRAYSCALE);
                 if (g == 0) {
                     dataMale.add(c.getHistogram());
                 } else {
@@ -150,7 +138,7 @@ public class TestPrasidang {
         Evaluation eva = null;
         double[] prediction = null;
         try {
-            src = new ConverterUtils.DataSource(PATH_TRAINING + "centrist_pca_" + pcaK + "_train.csv");
+            src = new ConverterUtils.DataSource(PATH_TRAINING_BHEP + "centristBHEP_pca_" + pcaK + "_train.csv");
             data_train = src.getDataSet();
             data_train.setClass(data_train.attribute("class"));
             SMO smo = new SMO();
@@ -161,7 +149,7 @@ public class TestPrasidang {
             smo.setKernel(rbf);
             smo.buildClassifier(data_train);
 
-            src = new ConverterUtils.DataSource(PATH_TRAINING + "pca_test.arff");
+            src = new ConverterUtils.DataSource(PATH_TRAINING + "pca_test_manualBHEP.arff");
             data_test = src.getDataSet();
             data_test.setClass(data_train.attribute("class"));
             //test
@@ -175,7 +163,7 @@ public class TestPrasidang {
             double realVal = data_test.instance(i).classValue();
             if (realVal != prediction[i]) {
                 System.out.print("- Data " + (i + 1) + " " + data_test.instance(i).stringValue(data_test.attribute("class")));
-                System.out.println(" - Prediction : False");
+                System.out.println("("+realVal+") - Prediction ("+prediction[i]+") : False");
             }
         }
         System.out.println("-------------------------------------------------------------------------------------");
@@ -186,10 +174,9 @@ public class TestPrasidang {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, Exception {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        cropFace();
-        centrist();
-        getDataFromCSV();
-        testPCA();
+//        centrist();
+//        getDataFromCSV();
+//        testPCA();
         testSVM();
     }
 }

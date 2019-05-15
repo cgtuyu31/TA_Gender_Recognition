@@ -244,7 +244,8 @@ public class SPM_Centrist {
                 emptyPos++;
             }
         }
-//        System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
+        
+        System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
     }
 
     public static double[] getHistogram() {

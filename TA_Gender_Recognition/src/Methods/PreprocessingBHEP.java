@@ -41,7 +41,11 @@ public class PreprocessingBHEP {
         //get img -> convert to YUV
         Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_UNCHANGED);
         Mat img_yuv = new Mat();
-        Imgproc.cvtColor(img_ori, img_yuv, Imgproc.COLOR_RGB2YCrCb);
+        if (img_ori.channels() == 3) {
+            Imgproc.cvtColor(img_ori, img_yuv, Imgproc.COLOR_RGB2YCrCb);
+        } else {
+            img_yuv = img_ori;
+        }
 
         // get the Y channel
 //        Mat img_y = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
@@ -70,20 +74,24 @@ public class PreprocessingBHEP {
         Mat smoothedImg = new Mat();
         Imgproc.GaussianBlur(equalizedImg, smoothedImg, new Size(0, 0), 3);
 
-        //concatenate Y to UV
-        for (int i = 0; i < img_yuv.rows(); i++) {
-            for (int j = 0; j < img_yuv.cols(); j++) {
-                double[] newpixel = new double[3];
-                newpixel[0] = smoothedImg.get(i, j)[0];
-                newpixel[1] = img_yuv.get(i, j)[1];
-                newpixel[2] = img_yuv.get(i, j)[2];
-                img_yuv.put(i, j, newpixel);
-            }
-        }
-
-        //convert YUV to RGB
         Mat finalImg = new Mat();
-        Imgproc.cvtColor(img_yuv, finalImg, Imgproc.COLOR_YCrCb2RGB);
+        if (img_ori.channels() == 3) {
+            //concatenate Y to UV
+            for (int i = 0; i < img_yuv.rows(); i++) {
+                for (int j = 0; j < img_yuv.cols(); j++) {
+                    double[] newpixel = new double[3];
+                    newpixel[0] = smoothedImg.get(i, j)[0];
+                    newpixel[1] = img_yuv.get(i, j)[1];
+                    newpixel[2] = img_yuv.get(i, j)[2];
+                    img_yuv.put(i, j, newpixel);
+                }
+            }
+
+            //convert YUV to RGB
+            Imgproc.cvtColor(img_yuv, finalImg, Imgproc.COLOR_YCrCb2RGB);
+        }else{
+            finalImg = smoothedImg;
+        }
 
 //        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
         return finalImg;
@@ -171,7 +179,7 @@ public class PreprocessingBHEP {
         int totpix2 = 0;
 
         int[] histogram = new int[256];
-        
+
         //frekuensi derajat keabuan
         for (int x = 0; x < wr.getWidth(); x++) {
             for (int y = 0; y < wr.getHeight(); y++) {
@@ -181,9 +189,9 @@ public class PreprocessingBHEP {
 
         //hitung nilai tengah dengan Harmonic Mean
         int hm = harmonicMean(histogram);
-        
+
         write_histogramBHEPawal(histogram);
-        
+
         //distribusi kumulatif hist1
         int[] chist1 = new int[hm];
 //        System.out.println("chist1 length " + chist1.length);
@@ -203,7 +211,7 @@ public class PreprocessingBHEP {
         }
         totpix2 = chist2[256 - hm - 1];
 //        System.out.println("chist2 total " + chist2[256 - hm - 1]);
-        
+
         //hitung nilai keabuan baru dengan persamaan 2.9 untuk setiap histogram
         float[] arr = new float[256];
         for (int i = 0; i < hm; i++) {
@@ -215,7 +223,7 @@ public class PreprocessingBHEP {
 
 //        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 1, histLength);
         write_new_histogram(arr);
-        
+
         //ubah dengan nilai keabuan baru
         for (int x = 0; x < wr.getWidth(); x++) {
             for (int y = 0; y < wr.getHeight(); y++) {
@@ -245,7 +253,6 @@ public class PreprocessingBHEP {
 
 //        System.out.println("n = " + n);
 //        System.out.println("total = " + total);
-
         double hm = n / total;
 //        System.out.println("hm " + hm);
 //        System.out.println("mathround(hm) " + Math.round(hm));

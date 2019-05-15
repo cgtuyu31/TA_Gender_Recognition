@@ -36,18 +36,24 @@ import weka.core.converters.ConverterUtils;
 public class GUI extends javax.swing.JFrame {
 
     public static final String PATH_HEADER_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
+//    public static String PATH_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\";
     public static String PATH_TRAINING = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Hasil_Training\\centrist\\k-40\\";
     public final static String PATH_HEADER_DATASET = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\";
 //    public final static String PATH_HEADER_TRAINING = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Hasil_Training\\";
 //    public final static String PATH_HEADER_DATASET = "C:\\Users\\Tuyu\\Documents\\Glenn\\Kuliah\\Java Projects\\TA_Dataset\\";
     public final static String[] classGender = {"male", "female",};
-
-    private static String[] pathGenderTrain = {
-        PATH_HEADER_DATASET + "lfw_male",
-        PATH_HEADER_DATASET + "lfw_female"};
+//    private static String[] pathGenderTrain = {
+//        PATH_HEADER_DATASET + "lfw_male",
+//        PATH_HEADER_DATASET + "lfw_female"};
+//    private static String[] pathCropGenderTrain = {
+//        PATH_HEADER_DATASET + "crop_lfw_male",
+//        PATH_HEADER_DATASET + "crop_lfw_female"};  
     private static String[] pathCropGenderTrain = {
-        PATH_HEADER_DATASET + "crop_lfw_male",
-        PATH_HEADER_DATASET + "crop_lfw_female"};
+        GUI.PATH_HEADER_DATASET + "manual_crop_male",
+        GUI.PATH_HEADER_DATASET + "manual_crop_female"};
+    private static String[] pathGenderTrain = {
+        GUI.PATH_HEADER_DATASET + "manual_male",
+        GUI.PATH_HEADER_DATASET + "manual_female"};
     private static int cType = 0;
     private static String centristType = "centrist";
     private static int nData = 1500;
