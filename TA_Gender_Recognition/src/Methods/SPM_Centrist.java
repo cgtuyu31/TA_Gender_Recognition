@@ -53,6 +53,7 @@ public class SPM_Centrist {
     }
 
     public SPM_Centrist(int level) {
+        this.level = level;
         int block = 0;
         for (int i = 0; i <= level; i++) {
             block += Math.pow(2, (2 * i)) + Math.pow((Math.pow(2, i) - 1), 2);
@@ -62,6 +63,7 @@ public class SPM_Centrist {
 
     public SPM_Centrist(int level, int type) {
         this.type = type;
+        this.level = level;
         int block = 0;
         for (int i = 0; i <= level; i++) {
             block += Math.pow(2, (2 * i)) + Math.pow((Math.pow(2, i) - 1), 2);
@@ -145,7 +147,7 @@ public class SPM_Centrist {
 //        Mat img_ori = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_GRAYSCALE);
         return finalImg;
     }
-    
+
     public static void extract(String imagePath) {
         Mat img;
         if (type == 0) {
@@ -159,92 +161,103 @@ public class SPM_Centrist {
         Mat cropImg;
         Mat resizedImg = new Mat();
         Size sz = new Size(250, 250);
-        
-        // level 0:
         Centrist centrist = new Centrist();
-        centrist.extract(img);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, 0, histLength);
+        Rect rectCrop;
 
-        // level 1:
-        int w = img.cols() / 2;
-        int h = img.rows() / 2;
+        if (level >= 0) {
+            // level 0:
+            centrist.extract(img);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, 0, histLength);
+        }
+
+        if (level >= 1) {
+            // level 1:
+            int w = img.cols() / 2;
+            int h = img.rows() / 2;
 
 //        Rect crop = new Rect(1 * wstep, 1 * hstep, wstep, hstep);
 //        Mat cropImg = new Mat(oriImg, crop);
 //        Mat resizeImg = new Mat();
 //        Size sz = new Size(250, 250);
 //        Imgproc.resize(cropImg, resizeImg, sz);
-//      liat di gambar 2.2 level 1
-        Rect rectCrop = new Rect(0, 0, w, h);
-        //--- resize
-        cropImg = new Mat(img, rectCrop);
-        Imgproc.resize(cropImg, resizedImg, sz);
-        //resize ---
-        centrist.extract(resizedImg);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 1, histLength);
+            //      liat di gambar 2.2 level 1
+            rectCrop = new Rect(0, 0, w, h);
+            //--- resize
+            cropImg = new Mat(img, rectCrop);
+            Imgproc.resize(cropImg, resizedImg, sz);
+            //resize ---
+            centrist.extract(resizedImg);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 1, histLength);
 
-        rectCrop = new Rect(w, 0, w, h);
-        //--- resize
-        cropImg = new Mat(img, rectCrop);
-        Imgproc.resize(cropImg, resizedImg, sz);
-        //resize ---
-        centrist.extract(resizedImg);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 2, histLength);
+            rectCrop = new Rect(w, 0, w, h);
+            //--- resize
+            cropImg = new Mat(img, rectCrop);
+//            System.out.println("cropHalf row = " + cropImg.rows());
+//            System.out.println("crcropHalfopHalf col = " + cropImg.cols());
+            Imgproc.resize(cropImg, resizedImg, sz);
+            //resize ---
+            centrist.extract(resizedImg);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 2, histLength);
 
-        rectCrop = new Rect(0, h, w, h);
-        //--- resize
-        cropImg = new Mat(img, rectCrop);
-        Imgproc.resize(cropImg, resizedImg, sz);
-        //resize ---
-        centrist.extract(resizedImg);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 3, histLength);
+            rectCrop = new Rect(0, h, w, h);
+            //--- resize
+            cropImg = new Mat(img, rectCrop);
+            Imgproc.resize(cropImg, resizedImg, sz);
+            //resize ---
+            centrist.extract(resizedImg);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 3, histLength);
 
-        rectCrop = new Rect(w, h, w, h);
-        //--- resize
-        cropImg = new Mat(img, rectCrop);
-        Imgproc.resize(cropImg, resizedImg, sz);
-        //resize ---
-        centrist.extract(resizedImg);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 4, histLength);
+            rectCrop = new Rect(w, h, w, h);
+            //--- resize
+            cropImg = new Mat(img, rectCrop);
+            Imgproc.resize(cropImg, resizedImg, sz);
+            //resize ---
+            centrist.extract(resizedImg);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 4, histLength);
 
-        // tambahan sub image di level 1 (bagian tengah)
-        rectCrop = new Rect(w / 2, h / 2, w, h);
-        //--- resize
-        cropImg = new Mat(img, rectCrop);
-        Imgproc.resize(cropImg, resizedImg, sz);
-        //resize ---
-        centrist.extract(resizedImg);
-        System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 5, histLength);
+            // tambahan sub image di level 1 (bagian tengah)
+            rectCrop = new Rect(w / 2, h / 2, w, h);
+            //--- resize
+            cropImg = new Mat(img, rectCrop);
+            Imgproc.resize(cropImg, resizedImg, sz);
+            //resize ---
+            centrist.extract(resizedImg);
+            System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * 5, histLength);
+        }
 
-        // level 2:
-        int wstep = img.cols() / 4;
-        int hstep = img.rows() / 4;
-        int emptyPos = 6; // posisi selanjutnya di histogram utama
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                rectCrop = new Rect(i * wstep, j * hstep, wstep, hstep);
-                //--- resize
-                cropImg = new Mat(img, rectCrop);
-                Imgproc.resize(cropImg, resizedImg, sz);
-                //resize ---
-                centrist.extract(resizedImg);
-                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
-                emptyPos++;
+        if (level >= 2) {
+            // level 2:
+            int wstep = img.cols() / 4;
+            int hstep = img.rows() / 4;
+            int emptyPos = 6; // posisi selanjutnya di histogram utama
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    rectCrop = new Rect(i * wstep, j * hstep, wstep, hstep);
+                    //--- resize
+                    cropImg = new Mat(img, rectCrop);
+//                    System.out.println("cropQuart row = " + cropImg.rows());
+//                    System.out.println("cropQuart col = " + cropImg.cols());
+                    Imgproc.resize(cropImg, resizedImg, sz);
+                    //resize ---
+                    centrist.extract(resizedImg);
+                    System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
+                    emptyPos++;
+                }
+            }
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    rectCrop = new Rect(wstep / 2 + i * wstep, hstep / 2 + j * hstep, wstep, hstep);
+                    //--- resize
+                    cropImg = new Mat(img, rectCrop);
+                    Imgproc.resize(cropImg, resizedImg, sz);
+                    //resize ---
+                    centrist.extract(resizedImg);
+                    System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
+                    emptyPos++;
+                }
             }
         }
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                rectCrop = new Rect(wstep / 2 + i * wstep, hstep / 2 + j * hstep, wstep, hstep);
-                //--- resize
-                cropImg = new Mat(img, rectCrop);
-                Imgproc.resize(cropImg, resizedImg, sz);
-                //resize ---
-                centrist.extract(resizedImg);
-                System.arraycopy(centrist.getHistogram(), 0, histogram, histLength * emptyPos, histLength);
-                emptyPos++;
-            }
-        }
-        
+
         System.out.println("Extract CENTRIST " + imagePath + " DONE!!");
     }
 
@@ -259,7 +272,7 @@ public class SPM_Centrist {
     public void setBlock(int block) {
         this.block = block;
     }
-    
+
     public static int getType() {
         return type;
     }
@@ -267,7 +280,7 @@ public class SPM_Centrist {
     public void setType(int type) {
         this.type = type;
     }
-    
+
     private static int harmonicMean(Mat img) {
         double n = img.rows() * img.cols();
 
@@ -308,25 +321,34 @@ public class SPM_Centrist {
         SPM_Centrist c = new SPM_Centrist(2);
 
         String path = "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\0_face.jpg";
+//        Mat img = Imgcodecs.imread(path, Imgcodecs.IMREAD_GRAYSCALE);
+//
+//        int halfRow = img.rows() / 2;
+//        int halfCol = img.cols() / 2;
+//        int quartRow = img.rows() / 4;
+//        int quartCol = img.cols() / 4;
+//
+//        System.out.println("Half Row = " + halfRow);
+//        System.out.println("Half Col = " + halfCol);
+//        System.out.println("Quart Row = " + quartRow);
+//        System.out.println("Quart Row = " + quartRow);
 
-        String[] pathCropGenderTrain = {
-            "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_male",
-            "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_female"};
-        Mat img_ori = c.preprocessingHE(path);
-        Imgcodecs.imwrite("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\img_y.jpg", img_ori);
-
-        int count = 0;
-        System.out.println("path: " + path);
+//        String[] pathCropGenderTrain = {
+//            "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_male",
+//            "G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\crop_lfw_female"};
+//        Mat img_ori = c.preprocessingHE(path);
+//        Imgcodecs.imwrite("G:\\Glenn\\Kuliah\\Bahan TA\\Java Projects\\TA_Dataset\\img_y.jpg", img_ori);
+//        int count = 0;
+//        System.out.println("path: " + path);
         c.extract(path);
-        for (int i = 0;
-                i < c.getHistogram().length; i++) {
-            if (c.getHistogram()[i] == 0) {
-                count++;
-            } else {
-                System.out.println(i + ". " + c.getHistogram()[i]);
-            }
-        }
-
+//        for (int i = 0;
+//                i < c.getHistogram().length; i++) {
+//            if (c.getHistogram()[i] == 0) {
+//                count++;
+//            } else {
+//                System.out.println(i + ". " + c.getHistogram()[i]);
+//            }
+//        }
 //        System.out.println("->> " + count);
 //        Mat img = Imgcodecs.imread(path, Imgcodecs.IMREAD_GRAYSCALE);
 //        System.out.println("rows : " + img.rows() + " - cols : " + img.cols());

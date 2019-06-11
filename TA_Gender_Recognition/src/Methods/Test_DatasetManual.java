@@ -39,13 +39,13 @@ public class Test_DatasetManual {
     private static String[] pathGenderTrain = {
         GUI.PATH_HEADER_DATASET + "manual_male",
         GUI.PATH_HEADER_DATASET + "manual_female"};
-    private static int nData = 76;
+    private static int nDataManual = 76;
     private static String PATH_TRAINING = GUI.PATH_HEADER_TRAINING + "centrist\\k-40\\";
     private static String PATH_TRAINING_BHEP = GUI.PATH_HEADER_TRAINING + "centristBHEP\\k-40\\";
     private static int block = 31;
-    private static int nTest = 76;
-    private static ArrayList<double[]> dataTestMale;
-    private static ArrayList<double[]> dataTestFemale;
+    private static int nTestManual = 76;
+    private static ArrayList<double[]> dataTestMaleManual;
+    private static ArrayList<double[]> dataTestFemaleManual;
     private static int totFeatures = 7936;
     private static int pcaK = 40;
     private static final int pcaFeatures = 256;
@@ -61,9 +61,9 @@ public class Test_DatasetManual {
         for (int g = 0; g < classGender.length; g++) {
             n = 0;
             File folderGenderTraining = new File(pathCropGenderTrain[g]);
-            String[] fileName = new String[nData];
+            String[] fileName = new String[nDataManual];
             System.out.println("classGender = " + classGender[g]);
-            for (int i = 0; i < nData; i++) {
+            for (int i = 0; i < nDataManual; i++) {
                 c = new SPM_Centrist(2);
                 c.extract(folderGenderTraining.listFiles()[i].toString());
                 fileName[i] = folderGenderTraining.listFiles()[i].getName();
@@ -86,23 +86,23 @@ public class Test_DatasetManual {
         }
     }
 
-    public static void getDataFromCSV() throws FileNotFoundException {
-        dataTestMale = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_male.csv", nData, totFeatures);
-        dataTestFemale = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_female.csv", nData, totFeatures);
+    public static void getDataManualFromCSV() throws FileNotFoundException {
+        dataTestMaleManual = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_male.csv", nDataManual, totFeatures);
+        dataTestFemaleManual = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_female.csv", nDataManual, totFeatures);
     }
 
     public static void testPCA() throws UnsupportedEncodingException, IOException {
         ArrayList<String[]> dataTest = new ArrayList<>();
         PCA pca;
         String[] weightTest;
-        for (int i = 0; i < dataTestMale.size(); i++) {
+        for (int i = 0; i < dataTestMaleManual.size(); i++) {
 //            dataTest.add(pca.testing(dataTestMale.get(i), classGender[0]));
             weightTest = new String[(block * pcaK) + 1];
             for (int j = 0; j < block; j++) {
                 System.out.println("======================================================");
                 System.out.println("Male " + (i + 1) + " - Block : " + (j + 1));
                 double[] tmp = new double[pcaFeatures];
-                tmp = Normalization.getChunkArray(dataTestMale.get(i), pcaFeatures, j);
+                tmp = Normalization.getChunkArray(dataTestMaleManual.get(i), pcaFeatures, j);
 
                 pca = new PCA(pcaK, pcaFeatures);
                 String[] weight = pca.test(tmp, classGender[0], j);
@@ -111,14 +111,14 @@ public class Test_DatasetManual {
             }
             dataTest.add(weightTest);
         }
-        for (int i = 0; i < dataTestFemale.size(); i++) {
+        for (int i = 0; i < dataTestFemaleManual.size(); i++) {
 //            dataTest.add(pca.testing(dataTestFemale.get(j), classGender[1]));
             weightTest = new String[(block * pcaK) + 1];
             for (int j = 0; j < block; j++) {
                 System.out.println("======================================================");
                 System.out.println("Female " + (i + 1) + " - Block : " + (j + 1));
                 double[] tmp = new double[pcaFeatures];
-                tmp = Normalization.getChunkArray(dataTestFemale.get(i), pcaFeatures, j);
+                tmp = Normalization.getChunkArray(dataTestFemaleManual.get(i), pcaFeatures, j);
 
                 pca = new PCA(pcaK, pcaFeatures);
                 String[] weight = pca.test(tmp, classGender[1], j);
@@ -163,7 +163,7 @@ public class Test_DatasetManual {
             double realVal = data_test.instance(i).classValue();
             if (realVal != prediction[i]) {
                 System.out.print("- Data " + (i + 1) + " " + data_test.instance(i).stringValue(data_test.attribute("class")));
-                System.out.println("("+realVal+") - Prediction ("+prediction[i]+") : False");
+                System.out.println("(" + realVal + ") - Prediction (" + prediction[i] + ") : False");
             }
         }
         System.out.println("-------------------------------------------------------------------------------------");
@@ -175,8 +175,8 @@ public class Test_DatasetManual {
     public static void main(String[] args) throws FileNotFoundException, IOException, Exception {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 //        centrist();
-//        getDataFromCSV();
+//        getDataManualFromCSV();
 //        testPCA();
-        testSVM();
+//        testSVM();
     }
 }

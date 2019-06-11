@@ -90,19 +90,6 @@ public class Test_CentristLevel1 {
         CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "centrist_level_1_test.csv");
     }
 
-    public static void getDataFromCSV() throws FileNotFoundException {
-//        ArrayList<double[]> data;
-//        data = CsvUtils.getAListDataFromText(PATH_TRAINING + "data_" + getCentristType() + "_male.csv", nData, totFeatures);
-//        dataTrainMale = new ArrayList<>(data.subList(0, nTrain));
-//        dataTestMale = new ArrayList<>(data.subList(nTrain, nData));
-//
-//        data = CsvUtils.getAListDataFromText(PATH_TRAINING + "data_" + getCentristType() + "_female.csv", nData, totFeatures);
-//        dataTrainFemale = new ArrayList<>(data.subList(0, nTrain));
-//        dataTestFemale = new ArrayList<>(data.subList(nTrain, nData));
-//        dataTestMale = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_male.csv", nData, totFeatures);
-//        dataTestFemale = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_female.csv", nData, totFeatures);
-    }
-
     public static void testSVM() throws Exception {
         ConverterUtils.DataSource src = null;
         Instances data_train = null;
@@ -146,10 +133,9 @@ public class Test_CentristLevel1 {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, Exception {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        centrist();
+        centrist();
 //        getDataFromCSV();
-//        testPCA();
-        testSVM();
+//        testSVM();
 
 //        double[] a = {1, 2, 3, 4, 5, 6};
 //        String tmp = Arrays.toString(a);

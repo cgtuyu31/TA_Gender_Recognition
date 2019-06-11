@@ -28,9 +28,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btn_trainPCA" alignment="0" max="32767" attributes="0"/>
                   <Component id="btn_testPCA" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btn_cropFace" alignment="0" max="32767" attributes="0"/>
                   <Component id="btn_Centrist" alignment="0" max="32767" attributes="0"/>
-                  <Component id="cb_centristType" max="32767" attributes="0"/>
                   <Component id="btn_SVM" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -51,9 +49,23 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_sigma" max="32767" attributes="0"/>
                   </Group>
+                  <Component id="btn_cropFace" alignment="0" max="32767" attributes="0"/>
+                  <Component id="cb_centristType" alignment="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="533" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jLabel_Manual" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="cb_otherTest" min="-2" pref="160" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton_otherCentrist" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton_otherPCA" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton_otherSVM" min="-2" pref="100" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jScrollPane1" min="-2" pref="498" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -62,12 +74,23 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel_cropFace" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel_Manual" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btn_cropFace" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="cb_otherTest" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton_otherCentrist" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton_otherPCA" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton_otherSVM" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jLabel_cropFace" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btn_cropFace" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel_centrist" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cb_centristType" min="-2" max="-2" attributes="0"/>
@@ -94,9 +117,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_SVM" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" min="-2" pref="387" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" min="-2" pref="321" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="14" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -217,6 +240,51 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_SVMActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton_otherPCA">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="PCA"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_otherPCAActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel_Manual">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Other Test"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton_otherCentrist">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="CENTRIST"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_otherCentristActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cb_otherTest">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="2">
+            <StringItem index="0" value="Manual Photo"/>
+            <StringItem index="1" value="CENTRIST Level 1"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cb_otherTestItemStateChanged"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton_otherSVM">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="SVM"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_otherSVMActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
