@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.opencv.core.Core;
@@ -24,6 +25,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.output.prediction.PlainText;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Instances;
@@ -110,6 +112,8 @@ public class GUI extends javax.swing.JFrame {
         jButton_otherCentrist = new javax.swing.JButton();
         cb_otherTest = new javax.swing.JComboBox<>();
         jButton_otherSVM = new javax.swing.JButton();
+        btn_predictImg = new javax.swing.JButton();
+        btn_openTest = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -210,18 +214,33 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        btn_predictImg.setText("Predict Image");
+        btn_predictImg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_predictImgpredictImgActionPerformed(evt);
+            }
+        });
+
+        btn_openTest.setText("TESTING");
+        btn_openTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_openTestActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_trainPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_testPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_Centrist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_SVM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btn_predictImg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_trainPCA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_testPCA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_Centrist, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_SVM, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel_cropFace)
                             .addComponent(jLabel_centrist)
@@ -232,12 +251,12 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(spin_kPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel_test))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel_sigma)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_sigma))
-                    .addComponent(btn_cropFace, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cb_centristType, 0, 0, Short.MAX_VALUE))
+                    .addComponent(btn_cropFace, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cb_centristType, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel_Manual, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -249,7 +268,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jButton_otherPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton_otherSVM, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_openTest))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -294,7 +314,11 @@ public class GUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_SVM))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_predictImg)
+                    .addComponent(btn_openTest))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -525,6 +549,20 @@ public class GUI extends javax.swing.JFrame {
         CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "pca_test.csv");
     }
 
+    /**
+     * This method saves the trained model to a file
+     *
+     * @param filename Desired destination to save the SVM model
+     * @return void
+     */
+    public void saveModelToFile(String filename, SMO model) {
+        try {
+            weka.core.SerializationHelper.write(filename, model);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void testSVM() throws Exception {
         ConverterUtils.DataSource src = null;
         Instances data_train = null;
@@ -542,6 +580,9 @@ public class GUI extends javax.swing.JFrame {
             rbf.setGamma(sigma);
             smo.setKernel(rbf);
             smo.buildClassifier(data_train);
+
+            String modelPath = PATH_TRAINING + "svm_train.model";
+            saveModelToFile(modelPath, smo);
 
             src = new ConverterUtils.DataSource(PATH_TRAINING + "pca_test.arff");
             data_test = src.getDataSet();
@@ -926,6 +967,109 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cb_otherTestItemStateChanged
 
+    private void btn_predictImgpredictImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_predictImgpredictImgActionPerformed
+        // TODO add your handling code here:
+        setParam();
+        if ((int) spin_kPCA.getValue() != 0) {
+            pcaK = (int) spin_kPCA.getValue();
+        }
+
+        JFileChooser jfc = new JFileChooser(PATH_HEADER_DATASET);
+        jfc.showOpenDialog(null);
+
+        File file = jfc.getSelectedFile();
+        String predPath = file.getAbsolutePath();
+        text_area_output.append("-------------------------------------------------------------------------------------\n");
+        text_area_output.append("Image Path : " + predPath + "\n");
+        SPM_Centrist c = new SPM_Centrist(2);
+        c.setType(cb_centristType.getSelectedIndex());
+        c.extract(predPath);
+        double[] hist = c.getHistogram();
+
+        PCA pca;
+        String[] weightTest;
+        weightTest = new String[(block * pcaK) + 1];
+        for (int j = 0; j < block; j++) {
+            try {
+                System.out.println("======================================================");
+                System.out.println("Predict Image - Block : " + (j + 1));
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(hist, pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.test(tmp, classGender[0], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = "?";
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        CsvUtils.writeToCSVwithLabel(weightTest, PATH_TRAINING + "pca_test_1data.arff");
+        text_area_output.append("- Saved Predict Image Model\n");
+        
+        try {
+            testSVM_1data();
+        } catch (Exception ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        text_area_output.append("-------------------------------------------------------------------------------------\n");
+    }//GEN-LAST:event_btn_predictImgpredictImgActionPerformed
+
+    private void btn_openTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_openTestActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_openTestActionPerformed
+
+    private void testSVM_1data() throws Exception {
+        ConverterUtils.DataSource src = null;
+        Instances data_train = null;
+        Instances data_test = null;
+        Evaluation eva = null;
+        double[] prediction = null;
+        try {
+            src = new ConverterUtils.DataSource(PATH_TRAINING + getCentristType() + "_pca_" + pcaK + "_train.csv");
+            data_train = src.getDataSet();
+            data_train.setClass(data_train.attribute("class"));
+            SMO smo = new SMO();
+
+            //train and build classifier
+            RBFKernel rbf = new RBFKernel();
+            rbf.setGamma(sigma);
+            smo.setKernel(rbf);
+            smo.buildClassifier(data_train);
+
+            String modelPath = PATH_TRAINING + "svm_train.model";
+            saveModelToFile(modelPath, smo);
+
+            src = new ConverterUtils.DataSource(PATH_TRAINING + "pca_test_1data.arff");
+            data_test = src.getDataSet();
+            data_test.setClass(data_train.attribute("class"));
+
+            data_test.setClassIndex(data_test.numAttributes() - 1);
+            eva = new Evaluation(data_test);
+            StringBuffer predsBuffer = new StringBuffer();
+            PlainText plainText = new PlainText();
+            plainText.setHeader(data_test);
+            plainText.setBuffer(predsBuffer);
+
+            //test
+            prediction = eva.evaluateModel(smo, data_test, plainText);
+            String preds = predsBuffer.toString();
+            if (preds.contains(":female")) {
+                text_area_output.append("Prediction : Female\n");
+            } else if (preds.contains(":male")) {
+                text_area_output.append("Prediction : Male\n");
+            } else {
+                text_area_output.append("Prediction : Unknown\n");
+            }
+
+        } catch (Exception ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static double getSigma() {
         return sigma;
     }
@@ -1021,6 +1165,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_Centrist;
     private javax.swing.JButton btn_SVM;
     private javax.swing.JButton btn_cropFace;
+    private javax.swing.JButton btn_openTest;
+    private javax.swing.JButton btn_predictImg;
     private javax.swing.JButton btn_testPCA;
     private javax.swing.JButton btn_trainPCA;
     private javax.swing.JComboBox<String> cb_centristType;

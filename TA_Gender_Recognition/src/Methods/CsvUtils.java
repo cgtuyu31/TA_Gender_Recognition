@@ -53,7 +53,45 @@ public class CsvUtils {
 //            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public static void writeToCSVwithLabel(String[] data, String path) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("@relation pca_test_1data");
+        builder.append(System.getProperty("line.separator"));
+        builder.append(System.getProperty("line.separator"));
+        for (int i = 0; i < data.length; i++) {
+            if (i != data.length - 1) {
+                builder.append("@attribute 'nilai " + (i + 1) + "' numeric");
+                builder.append(System.getProperty("line.separator"));
+            } else {
+                builder.append("@attribute class {male,female}");
+                builder.append(System.getProperty("line.separator"));
+            }
+        }
+        builder.append(System.getProperty("line.separator"));
+        builder.append(System.getProperty("line.separator"));
+        builder.append("@data");
+        builder.append(System.getProperty("line.separator"));
+        for (int j = 0; j < data.length; j++) {
+            if (j == data.length - 1) {
+                builder.append(data[j]);
+            } else {
+                builder.append(data[j] + ",");
+            }
+        }
+        builder.append(System.getProperty("line.separator"));
+
+        BufferedWriter writer;
+        try {
+            writer = new BufferedWriter(new FileWriter(path));
+            writer.write(builder.toString());//save the string representation of the board
+            writer.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+//            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static void writeAListStringToCSV(ArrayList<String[]> lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.size(); i++) {
@@ -73,7 +111,7 @@ public class CsvUtils {
 //            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void writeAListDoubleToCSV(ArrayList<double[]> lists, String path) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lists.size(); i++) {
@@ -128,7 +166,7 @@ public class CsvUtils {
 //            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void writeMatrixToCSV(Matrix lists, String path) {
         double[][] tmp = lists.getArray();
         StringBuilder builder = new StringBuilder();
@@ -208,7 +246,7 @@ public class CsvUtils {
         }
         return data;
     }
-    
+
     public static double[] getDataFromCSV(String path, int n) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(path));
         String line;

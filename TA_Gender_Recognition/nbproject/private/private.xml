@@ -5,9 +5,12 @@
         <group>
             <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/SPM_Centrist.java</file>
             <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/Test_DatasetManual.java</file>
+            <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/Test_CentristLevel1.java</file>
+            <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/PCA.java</file>
             <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/ta_gender_recognition/GUI.java</file>
             <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/Histogram.java</file>
-            <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/TestBHEP.java</file>
+            <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/FaceDetector.java</file>
+            <file>file:/G:/Glenn/Kuliah/GitHub/TA_Gender_Recognition/TA_Gender_Recognition/src/Methods/PreprocessingBHEP.java</file>
         </group>
     </open-files>
 </project-private>

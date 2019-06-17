@@ -48,7 +48,11 @@ public class Test_CentristLevel1 {
     private static ArrayList<double[]> dataTestFemale;
     private static ArrayList<double[]> dataTrainMale;
     private static ArrayList<double[]> dataTrainFemale;
+    private static ArrayList<double[]> dataTestMaleManual;
+    private static ArrayList<double[]> dataTestFemaleManual;
     private static int totFeatures = 1536;
+    private static int pcaK = 40;
+    private static final int pcaFeatures = 256;
     private static double sigma = 0.01;
 
     public static void centrist() {
@@ -90,6 +94,51 @@ public class Test_CentristLevel1 {
         CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "centrist_level_1_test.csv");
     }
 
+    public static void getDataManualFromCSV() throws FileNotFoundException {
+        dataTestMaleManual = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_male.csv", nData, totFeatures);
+        dataTestFemaleManual = CsvUtils.getAListDataFromText(PATH_TRAINING + "testManual_female.csv", nData, totFeatures);
+    }
+
+    public static void testPCA() throws UnsupportedEncodingException, IOException {
+        ArrayList<String[]> dataTest = new ArrayList<>();
+        PCA pca;
+        String[] weightTest;
+        for (int i = 0; i < dataTestMale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestMale.get(i), classGender[0]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Male " + (i + 1) + " - Block : " + (j + 1));
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestMale.get(i), pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.test(tmp, classGender[0], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[0];
+            }
+            dataTest.add(weightTest);
+        }
+        for (int i = 0; i < dataTestFemale.size(); i++) {
+//            dataTest.add(pca.testing(dataTestFemale.get(j), classGender[1]));
+            weightTest = new String[(block * pcaK) + 1];
+            for (int j = 0; j < block; j++) {
+                System.out.println("======================================================");
+                System.out.println("Female " + (i + 1) + " - Block : " + (j + 1));
+                double[] tmp = new double[pcaFeatures];
+                tmp = Normalization.getChunkArray(dataTestFemale.get(i), pcaFeatures, j);
+
+                pca = new PCA(pcaK, pcaFeatures);
+                String[] weight = pca.test(tmp, classGender[1], j);
+                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+                weightTest[weightTest.length - 1] = classGender[1];
+            }
+            dataTest.add(weightTest);
+        }
+
+        CsvUtils.writeToCSVwithLabel(dataTest, PATH_TRAINING + "pca_test_centristLv1PCA.csv");
+    }
+    
     public static void testSVM() throws Exception {
         ConverterUtils.DataSource src = null;
         Instances data_train = null;
@@ -133,7 +182,8 @@ public class Test_CentristLevel1 {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, Exception {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        centrist();
+//        centrist();
+        testPCA();
 //        getDataFromCSV();
 //        testSVM();
 
