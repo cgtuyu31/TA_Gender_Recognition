@@ -25,14 +25,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="btn_predictImg" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btn_trainPCA" alignment="0" max="32767" attributes="0"/>
                   <Component id="btn_testPCA" alignment="0" max="32767" attributes="0"/>
                   <Component id="btn_Centrist" alignment="0" max="32767" attributes="0"/>
                   <Component id="btn_SVM" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel_sigma" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txt_sigma" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="btn_cropFace" alignment="0" max="32767" attributes="0"/>
+                  <Component id="cb_centristType" alignment="0" pref="168" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jLabel_test1Img" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel_cropFace" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel_centrist" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel_train" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -45,15 +52,9 @@
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel_sigma" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txt_sigma" max="32767" attributes="0"/>
-                  </Group>
-                  <Component id="btn_cropFace" alignment="0" max="32767" attributes="0"/>
-                  <Component id="cb_centristType" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="btn_predictImg" alignment="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel_Manual" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
@@ -65,10 +66,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton_otherSVM" min="-2" pref="100" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" min="-2" pref="498" max="-2" attributes="0"/>
-                  <Component id="btn_openTest" min="-2" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="490" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -90,8 +90,8 @@
                       <Component id="jButton_otherSVM" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel_centrist" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -107,7 +107,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_trainPCA" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="jLabel_test" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_testPCA" min="-2" max="-2" attributes="0"/>
@@ -118,15 +118,14 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_SVM" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel_test1Img" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btn_predictImg" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" min="-2" pref="321" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btn_predictImg" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btn_openTest" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="26" max="32767" attributes="0"/>
+              <EmptySpace pref="11" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -302,13 +301,10 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_predictImgpredictImgActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_openTest">
+    <Component class="javax.swing.JLabel" name="jLabel_test1Img">
       <Properties>
-        <Property name="text" type="java.lang.String" value="TESTING"/>
+        <Property name="text" type="java.lang.String" value="Predict 1 Image"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_openTestActionPerformed"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>

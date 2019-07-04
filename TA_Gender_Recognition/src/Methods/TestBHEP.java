@@ -45,16 +45,17 @@ public class TestBHEP {
 //            }
 //        }
 
-//        PreprocessingBHEP bhep = new PreprocessingBHEP();
-//        Mat img = bhep.getBHEP(GUI.PATH_HEADER_DATASET + "manual_crop_female\\face_0.jpg");
-//        Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
-//        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_female\\zbhep_z6.jpg", img);
-//        img = Imgcodecs.imread(GUI.PATH_HEADER_DATASET + "manual_crop_female\\face_0.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-//        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_female\\zgray_z6.jpg", img);
+        PreprocessingBHEP bhep = new PreprocessingBHEP();
+        Mat img = bhep.getBHEP(GUI.PATH_HEADER_DATASET + "manual_crop_male\\lower_27.jpg");
+        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_male\\zbhep_27.jpg", img);
+        Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
+        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_male\\zbhepgray_27.jpg", img);
+//        img = Imgcodecs.imread(GUI.PATH_HEADER_DATASET + "manual_crop_male\\face_0.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+//        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_male\\zgray_z6.jpg", img);
 //        img = Imgcodecs.imread(GUI.PATH_HEADER_DATASET + "manual_crop_male\\lower_27.jpg", Imgcodecs.IMREAD_GRAYSCALE);
 //        Imgproc.equalizeHist(img, img);
 //        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_male\\zhe_lower2.jpg", img);
-        
+//        
 //        img = bhep.getBHEP(GUI.PATH_HEADER_DATASET + "manual_crop_male\\10_face.jpg");
 //        Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 //        Imgcodecs.imwrite(GUI.PATH_HEADER_DATASET + "manual_crop_male\\audric_gray_10.jpg", img);

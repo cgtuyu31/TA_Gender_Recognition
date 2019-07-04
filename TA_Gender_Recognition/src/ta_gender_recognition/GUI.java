@@ -113,7 +113,7 @@ public class GUI extends javax.swing.JFrame {
         cb_otherTest = new javax.swing.JComboBox<>();
         jButton_otherSVM = new javax.swing.JButton();
         btn_predictImg = new javax.swing.JButton();
-        btn_openTest = new javax.swing.JButton();
+        jLabel_test1Img = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -221,12 +221,7 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        btn_openTest.setText("TESTING");
-        btn_openTest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_openTestActionPerformed(evt);
-            }
-        });
+        jLabel_test1Img.setText("Predict 1 Image");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -234,30 +229,31 @@ public class GUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btn_predictImg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_trainPCA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_testPCA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_Centrist, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_SVM, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel_cropFace)
-                            .addComponent(jLabel_centrist)
-                            .addComponent(jLabel_train)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel_kPCA)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spin_kPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel_test))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_trainPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_testPCA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_Centrist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_SVM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel_sigma)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_sigma))
-                    .addComponent(btn_cropFace, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cb_centristType, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(btn_cropFace, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cb_centristType, 0, 168, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel_test1Img, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_cropFace, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_centrist, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_train, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel_kPCA)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spin_kPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel_test, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btn_predictImg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel_Manual, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -268,9 +264,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jButton_otherPCA, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton_otherSVM, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_openTest))
-                .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -287,8 +282,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jButton_otherCentrist)
                         .addComponent(jButton_otherPCA)
                         .addComponent(jButton_otherSVM)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel_centrist)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -303,7 +298,7 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(jLabel_kPCA))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_trainPCA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(20, 20, 20)
                         .addComponent(jLabel_test)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_testPCA)
@@ -312,13 +307,13 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(jLabel_sigma)
                             .addComponent(txt_sigma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_SVM))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_predictImg)
-                    .addComponent(btn_openTest))
-                .addContainerGap(26, Short.MAX_VALUE))
+                        .addComponent(btn_SVM)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel_test1Img)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_predictImg))
+                    .addComponent(jScrollPane1))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         pack();
@@ -607,20 +602,6 @@ public class GUI extends javax.swing.JFrame {
         text_area_output.append("- Accuracy : " + eva.pctCorrect() + "%\n");
         text_area_output.append("- Misclassification Rate : " + eva.pctIncorrect() + "%\n");
         text_area_output.append(eva.toMatrixString(""));
-
-//        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
-//        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
-//        double[][] confMatrix = eva.confusionMatrix();
-//        text_area_output.append("- male \t female \n");
-//        System.out.println("male \t female");
-//        for (int i = 0; i < confMatrix.length; i++) {
-//            for (int j = 0; j < confMatrix[0].length; j++) {
-//                text_area_output.append("- " + confMatrix[i][j] + " \t");
-//                System.out.print(confMatrix[i][j] + " \t ");
-//            }
-//            text_area_output.append(" \n");
-//            System.out.println("");
-//        }
         text_area_output.append("-------------------------------------------------------------------------------------\n");
     }
 
@@ -881,20 +862,6 @@ public class GUI extends javax.swing.JFrame {
         text_area_output.append("- Accuracy : " + eva.pctCorrect() + "%\n");
         text_area_output.append("- Misclassification Rate : " + eva.pctIncorrect() + "%\n");
         text_area_output.append(eva.toMatrixString(""));
-
-//        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
-//        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
-//        double[][] confMatrix = eva.confusionMatrix();
-//        text_area_output.append("- male \t female \n");
-//        System.out.println("male \t female");
-//        for (int i = 0; i < confMatrix.length; i++) {
-//            for (int j = 0; j < confMatrix[0].length; j++) {
-//                text_area_output.append("- " + confMatrix[i][j] + " \t");
-//                System.out.print(confMatrix[i][j] + " \t ");
-//            }
-//            text_area_output.append(" \n");
-//            System.out.println("");
-//        }
         text_area_output.append("-------------------------------------------------------------------------------------\n");
     }
 
@@ -939,20 +906,6 @@ public class GUI extends javax.swing.JFrame {
         text_area_output.append("- Accuracy : " + eva.pctCorrect() + "%\n");
         text_area_output.append("- Misclassification Rate : " + eva.pctIncorrect() + "%\n");
         text_area_output.append(eva.toMatrixString(""));
-
-//        System.out.println("Correctly Classified Instances :  " + eva.pctCorrect());
-//        System.out.println("Correctly Classified Instances :  " + eva.pctIncorrect());
-//        double[][] confMatrix = eva.confusionMatrix();
-//        text_area_output.append("- male \t female \n");
-//        System.out.println("male \t female");
-//        for (int i = 0; i < confMatrix.length; i++) {
-//            for (int j = 0; j < confMatrix[0].length; j++) {
-//                text_area_output.append("- " + confMatrix[i][j] + " \t");
-//                System.out.print(confMatrix[i][j] + " \t ");
-//            }
-//            text_area_output.append(" \n");
-//            System.out.println("");
-//        }
         text_area_output.append("-------------------------------------------------------------------------------------\n");
     }
 
@@ -969,58 +922,69 @@ public class GUI extends javax.swing.JFrame {
 
     private void btn_predictImgpredictImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_predictImgpredictImgActionPerformed
         // TODO add your handling code here:
-        setParam();
-        if ((int) spin_kPCA.getValue() != 0) {
-            pcaK = (int) spin_kPCA.getValue();
-        }
-
-        JFileChooser jfc = new JFileChooser(PATH_HEADER_DATASET);
-        jfc.showOpenDialog(null);
-
-        File file = jfc.getSelectedFile();
-        String predPath = file.getAbsolutePath();
-        text_area_output.append("-------------------------------------------------------------------------------------\n");
-        text_area_output.append("Image Path : " + predPath + "\n");
-        SPM_Centrist c = new SPM_Centrist(2);
-        c.setType(cb_centristType.getSelectedIndex());
-        c.extract(predPath);
-        double[] hist = c.getHistogram();
-
-        PCA pca;
-        String[] weightTest;
-        weightTest = new String[(block * pcaK) + 1];
-        for (int j = 0; j < block; j++) {
-            try {
-                System.out.println("======================================================");
-                System.out.println("Predict Image - Block : " + (j + 1));
-                double[] tmp = new double[pcaFeatures];
-                tmp = Normalization.getChunkArray(hist, pcaFeatures, j);
-
-                pca = new PCA(pcaK, pcaFeatures);
-                String[] weight = pca.test(tmp, classGender[0], j);
-                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
-                weightTest[weightTest.length - 1] = "?";
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+         /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new GUI_Test1Data().setVisible(true);
             }
-        }
-
-        CsvUtils.writeToCSVwithLabel(weightTest, PATH_TRAINING + "pca_test_1data.arff");
-        text_area_output.append("- Saved Predict Image Model\n");
-        
-        try {
-            testSVM_1data();
-        } catch (Exception ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        text_area_output.append("-------------------------------------------------------------------------------------\n");
+        });
+//        setParam();
+//        if ((int) spin_kPCA.getValue() != 0) {
+//            pcaK = (int) spin_kPCA.getValue();
+//        }
+//        setSigma(Double.parseDouble(txt_sigma.getText()));
+//
+//        JFileChooser jfc = new JFileChooser(PATH_HEADER_DATASET);
+//        jfc.showOpenDialog(null);
+//
+//        File file = jfc.getSelectedFile();
+//        String initial_path = file.getAbsolutePath();
+//        text_area_output.append("-------------------------------------------------------------------------------------\n");
+//        text_area_output.append("Image Path : " + initial_path + "\n");
+//        String predImg = PATH_HEADER_DATASET + "\\predict_image\\predImg.jpg";
+//        
+//        FaceDetector faceDetector = new FaceDetector();
+//        Mat[] mats = faceDetector.snipFace(initial_path, new Size(250, 250));
+//        for (Mat mat : mats) {
+//            Imgcodecs.imwrite(predImg, mat);
+//        }
+//
+//        SPM_Centrist c = new SPM_Centrist(2);
+//        c.setType(cb_centristType.getSelectedIndex());
+//        c.extract(predImg);
+//        double[] hist = c.getHistogram();
+//
+//        PCA pca;
+//        String[] weightTest;
+//        weightTest = new String[(block * pcaK) + 1];
+//        for (int j = 0; j < block; j++) {
+//            try {
+//                System.out.println("======================================================");
+//                System.out.println("Predict Image - Block : " + (j + 1));
+//                double[] tmp = new double[pcaFeatures];
+//                tmp = Normalization.getChunkArray(hist, pcaFeatures, j);
+//
+//                pca = new PCA(pcaK, pcaFeatures);
+//                String[] weight = pca.test(tmp, classGender[0], j);
+//                System.arraycopy(weight, 0, weightTest, j * pcaK, weight.length);
+//                weightTest[weightTest.length - 1] = "?";
+//            } catch (UnsupportedEncodingException ex) {
+//                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (IOException ex) {
+//                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//
+//        CsvUtils.writeToCSVwithLabel(weightTest, PATH_TRAINING + "pca_test_1data.arff");
+//        text_area_output.append("- Saved Predict Image Model\n");
+//
+//        try {
+//            testSVM_1data();
+//        } catch (Exception ex) {
+//            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        text_area_output.append("-------------------------------------------------------------------------------------\n");
     }//GEN-LAST:event_btn_predictImgpredictImgActionPerformed
-
-    private void btn_openTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_openTestActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_openTestActionPerformed
 
     private void testSVM_1data() throws Exception {
         ConverterUtils.DataSource src = null;
@@ -1165,7 +1129,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_Centrist;
     private javax.swing.JButton btn_SVM;
     private javax.swing.JButton btn_cropFace;
-    private javax.swing.JButton btn_openTest;
     private javax.swing.JButton btn_predictImg;
     private javax.swing.JButton btn_testPCA;
     private javax.swing.JButton btn_trainPCA;
@@ -1180,6 +1143,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_kPCA;
     private javax.swing.JLabel jLabel_sigma;
     private javax.swing.JLabel jLabel_test;
+    private javax.swing.JLabel jLabel_test1Img;
     private javax.swing.JLabel jLabel_train;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner spin_kPCA;
